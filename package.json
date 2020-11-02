@@ -1,0 +1,27 @@
+{
+  "name": "login-by-puppeteer",
+  "version": "1.0.0",
+  "description": "login by puppeteer using cookie token",
+  "main": "index.js",
+  "author": "orange634nty",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.0",
+    "cheerio": "^1.0.0-rc.3",
+    "cheerio-tableparser": "^1.0.1",
+    "dotenv": "^8.2.0",
+    "node-cron": "^2.0.3",
+    "puppeteer": "^1.20.0",
+    "request": "^2.88.2",
+    "tough-cookie-filestore": "0.0.1"
+  },
+  "scripts": {
+    "start": "node -r dotenv/config", 
+    "getCookie": "node getCookie.js",
+    "getTitle": "node getTitle.js"
+  },
+  "devDependencies": {
+    "mysql": "^2.18.1"
+  },
+  "type": "module"
+}
