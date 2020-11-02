@@ -1,5 +1,5 @@
-import fs from "fs";
-import puppeteer from "puppeteer";
+import fs from 'fs';
+import puppeteer from 'puppeteer';
 
 const ACCOUNT_PASS = process.env.ACCOUNT_PASS;
 const USERID = process.env.USERID;

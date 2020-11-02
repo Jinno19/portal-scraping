@@ -1,5 +1,5 @@
-import puppeteer from "puppeteer";
-import fs from "fs";
+import fs from 'fs';
+import puppeteer from 'puppeteer';
 
 const LECTUREINFORMATION_URL = "https://service.cloud.teu.ac.jp/inside2/hachiouji/hachioji_common/cancel/";
 

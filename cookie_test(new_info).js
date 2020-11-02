@@ -1,7 +1,7 @@
-import axios from "axios";
-import fs from "fs";
-import puppeteer from "puppeteer";
-import cheerio from "cheerio";
+import fs from 'fs';
+import axios from 'axios';
+import puppeteer from 'puppeteer';
+import cheerio from 'cheerio';
 
 const ACCOUNT_EMAIL = process.env.ACCOUNT_EMAIL;
 const ACCOUNT_PASS = process.env.ACCOUNT_PASS;

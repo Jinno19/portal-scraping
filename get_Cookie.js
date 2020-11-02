@@ -1,10 +1,10 @@
-import puppeteer from "puppeteer";
-import fs from "fs";
+import fs from 'fs';
+import puppeteer from 'puppeteer';
 
-const ACCOUNT_EMAIL = 'c01171576b@edu.teu.ac.jp';
-const ACCOUNT_PASS = 'ibE7nx3G%';
+const ACCOUNT_EMAIL = process.env.ACCOUNT_EMAIL;
+const ACCOUNT_PASS = process.env.ACCOUNT_PASS;
+const USERID = process.env.USERID;
 const INFORMATION_URL = "https://service.cloud.teu.ac.jp/portal/inside";
-const USERID = 'c01171576b'
 
 const COOKIES_PATH = 'cookies.json';
 
