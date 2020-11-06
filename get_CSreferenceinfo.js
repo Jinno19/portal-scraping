@@ -19,41 +19,32 @@ async function getReference(page) {
         a => a.textContent.replace(/[\n]/g, ""));
         return titles;
     });
-    for(let i = 1; i < title.length; i++) {
-        const page_moving = await page.evaluate(() => {
-            let Sdl_codes = Array.from(document.querySelectorAll('html > body > .normal > tbody > tr > td:nth-child(5)'), 
-            a => a.textContent.replace(/[\n]/g, ""));
-            refer('2020', 'CS', 'C21101', 'ja_JP');
-            (window.onload = function () {
-                let tabs_link = document.querySelector('#tabs > ul > li:nth-child(2) > a');
-                tabs_link.click();
-            })();
-        });
-        page_moving;
-        //await page.click('#tabs > ul > li:nth-child(2) > a');
+    const Lecture_length = await page.evaluate(() => {
+        let lec_length = document.querySelector('body > b:nth-child(5)').textContent.replace( /[^0-9]/g, "");
+        return parseInt(lec_length);
+    });
+    for(let i = 1; i <= Lecture_length; i++) {
+        await page.click(`body > .normal > tbody > tr:nth-child(${i}) > td:nth-child(8) > input`);
+        await page.waitForSelector('#tabs > ul > li:nth-child(2) > a');
+        await page.click('#tabs > ul > li:nth-child(2) > a');
+        await page.waitForSelector('#tabs-2 > table > tbody > tr:nth-child(9) > th');
         let ref_title = await page.evaluate(() => {
-            let rTitle = document.querySelector('#tabs-2 > table > tbody > tr:nth-child(9) > .syllabus-break-word');
-            return rTitle.textContent;
+            let isReference = document.querySelector('#tabs-2 > table > tbody > tr:nth-child(9) > th').textContent.replace(/[\n]/g, "").trim();
+            if (isReference == "参考書") {
+                let rTitle = document.querySelector('#tabs-2 > table > tbody > tr:nth-child(9) > .syllabus-break-word');
+                return rTitle.textContent.replace(/[\n]/g, "").trim();
+            } else {
+                return '参考書の指定はありません。';
+            }
         });
         CS_Reference.push({
-            title: title[i], 
+            title: title[i-1], 
             Reference: ref_title
         })
+        await page.goBack();
     }
     return CS_Reference;
 }
-
-async function refer(nendo, jscd, jcd, locale) {
-    var f = document.ReferForm;
-
-    f.nendo.value = nendo;
-    f.jikanwariShozokuCode.value = jscd;
-    f.jikanwaricd.value = jcd;
-    f.locale.value = locale;
-
-    f.submit();
-}
-
 
 (async () => {
     process.on('unhandledRejection', console.dir);
@@ -87,7 +78,7 @@ async function refer(nendo, jscd, jcd, locale) {
     await page.select('table > tbody > tr:nth-child(11) > td > select', '500');
     await page.click('table > tbody > tr:nth-child(11) > td > select');
     await page.click('#jikanwariSearchForm > table > tbody > tr:nth-child(12) > td > p > input[type=button]');
-    await page.waitFor(4000);
+    await page.waitFor(3000);
     const CS_result = await getReference(page);
     console.log(util.inspect(CS_result, {maxArrayLength: null}));
     
