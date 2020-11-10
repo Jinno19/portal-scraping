@@ -1,4 +1,5 @@
 import fs from 'fs';
+
 import axios from 'axios';
 import puppeteer from 'puppeteer';
 import cheerio from 'cheerio';
@@ -12,6 +13,7 @@ async function getPage(uri) {
     const title = [];
     const page_uri = [];
     const context = [];
+    const isSignificant = [];
     const titles_arr = [];
     const json = fs.readFileSync(COOKIE_PATH, 'utf-8');
     const value = JSON.parse(json).find(obj => obj.name === 'auth_tkt').value;
@@ -30,8 +32,9 @@ async function getPage(uri) {
     const $ = cheerio.load(result);
     $('#tab2 > .front_news_list > li').each((i, elem) => {
             title[i] = $(elem).find('p > a:nth-child(2), a > p').text().replace(/[\f\r\t\v]/g, ""), 
-            page_uri[i] = 'https://service.cloud.teu.ac.jp' + $(elem).find('p > a:nth-child(2), a').attr('href')
-    })
+            page_uri[i] = 'https://service.cloud.teu.ac.jp' + $(elem).find('p > a:nth-child(2), a').attr('href'),
+            isSignificant[i] = $(elem).find('span').text()
+        })
     for (let s = 0; s < page_uri.length; s++) {
         let page_context = (await axios.get(page_uri[s], {
             withCredentials: true, 
@@ -47,9 +50,13 @@ async function getPage(uri) {
         let fragment_list = context_fragment.filter(v => v.length > 2).join();
         fragment_list = fragment_list.replace(/,/g, "");
         context.push(fragment_list);
+        title[s] = JSON.stringify(title[s]).replace(/"/g, "");
+        page_uri[s] = JSON.stringify(page_uri[s]).replace(/"/g, "");
+        context[s] = JSON.stringify(context[s]).replace(/"/g, "");
         titles_arr.push({
             title: title[s], 
-            uri: page_uri[s], 
+            uri: page_uri[s],
+            isSignificant: /重要/.test(isSignificant[s]),
             context: context[s]
         });
     }
@@ -63,7 +70,7 @@ async function login() {
 
     const page = await browser.newPage();
     await page.goto('https://service.cloud.teu.ac.jp/portal/inside', {waitUntil: 'networkidle0'});
-
+    
     await page.waitFor(2500);
     await page.click('#identifierId');
     await page.type('#identifierId', ACCOUNT_EMAIL);

@@ -1,4 +1,5 @@
 import fs from 'fs';
+
 import axios from 'axios';
 import puppeteer from 'puppeteer';
 import cheerio from 'cheerio';
@@ -40,7 +41,7 @@ async function getPage(uri) {
             department: lectures_frg[3], 
             grade: lectures_frg[4], 
             class: lectures_frg[5], 
-            note: lectures_frg[6], 
+            note: lectures_frg[6],  
             up: lectures_frg[7], 
             from: lectures_frg[8]
         })

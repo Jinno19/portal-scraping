@@ -1,5 +1,6 @@
 import fs from 'fs';
 import util from 'util';
+
 import puppeteer from 'puppeteer';
 
 const ACCOUNT_PASS = process.env.ACCOUNT_PASS;
