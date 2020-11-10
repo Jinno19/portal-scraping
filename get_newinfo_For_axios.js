@@ -13,7 +13,7 @@ async function getPage(uri) {
     const title = [];
     const page_uri = [];
     const context = [];
-    const isSignificant = [];
+    const tag_list = [];
     const titles_arr = [];
     const json = fs.readFileSync(COOKIE_PATH, 'utf-8');
     const value = JSON.parse(json).find(obj => obj.name === 'auth_tkt').value;
@@ -33,7 +33,7 @@ async function getPage(uri) {
     $('#tab2 > .front_news_list > li').each((i, elem) => {
             title[i] = $(elem).find('p > a:nth-child(2), a > p').text().replace(/[\f\r\t\v]/g, ""), 
             page_uri[i] = 'https://service.cloud.teu.ac.jp' + $(elem).find('p > a:nth-child(2), a').attr('href'),
-            isSignificant[i] = $(elem).find('span').text()
+            tag_list[i] = $(elem).find('span').text()
         })
     for (let s = 0; s < page_uri.length; s++) {
         let page_context = (await axios.get(page_uri[s], {
@@ -50,13 +50,20 @@ async function getPage(uri) {
         let fragment_list = context_fragment.filter(v => v.length > 2).join();
         fragment_list = fragment_list.replace(/,/g, "");
         context.push(fragment_list);
-        title[s] = JSON.stringify(title[s]).replace(/"/g, "");
-        page_uri[s] = JSON.stringify(page_uri[s]).replace(/"/g, "");
-        context[s] = JSON.stringify(context[s]).replace(/"/g, "");
         titles_arr.push({
             title: title[s], 
             uri: page_uri[s],
-            isSignificant: /重要/.test(isSignificant[s]),
+            isSignificant: /重要/.test(tag_list[s]),
+            isAll: /全学部/.test(tag_list[s]),
+            isCS: /CS/.test(tag_list[s]),
+            isES: /ES/.test(tag_list[s]),
+            isBS: /BS/.test(tag_list[s]),
+            isMS: /MS/.test(tag_list[s]),
+            isHS: /HS/.test(tag_list[s]),
+            isDS: /DS/.test(tag_list[s]),
+            isGraduate_hachi: /院八/.test(tag_list[s]),
+            isGraduate_kou: /院工学/.test(tag_list[s]),
+            isGraduate_DS: /院DS/.test(tag_list[s]),
             context: context[s]
         });
     }
@@ -102,6 +109,8 @@ async function login() {
 
 (async () => {
     const uri = 'https://service.cloud.teu.ac.jp/inside2/hachiouji/computer_science/';
-    const result_data = await getPage(uri)
-    console.log(result_data);
+    const result_data = await getPage(uri);
+    const result_json = JSON.stringify(result_data);
+    const decode_json = JSON.parse(result_json);
+    console.log(decode_json);
 })();
