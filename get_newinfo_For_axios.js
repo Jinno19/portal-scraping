@@ -10,7 +10,10 @@ const USERID = process.env.USERID;
 const COOKIE_PATH = "cookies.json";
 
 async function getPage(uri) {
+    const day = [];
     const title = [];
+    const sig_day = [];
+    const sig_title = [];
     const page_uri = [];
     const context = [];
     const tag_list = [];
@@ -31,10 +34,18 @@ async function getPage(uri) {
     }
     const $ = cheerio.load(result);
     $('#tab2 > .front_news_list > li').each((i, elem) => {
-            title[i] = $(elem).find('p > a:nth-child(2), a > p').text().replace(/[\f\r\t\v]/g, ""), 
-            page_uri[i] = 'https://service.cloud.teu.ac.jp' + $(elem).find('p > a:nth-child(2), a').attr('href'),
-            tag_list[i] = $(elem).find('span').text()
-        })
+            day[i] = $(elem).find('datetime').text().replace(/[\f\r\t\v]/g, "");
+            title[i] = $(elem).find('p > a:nth-child(2), a > p').text().replace(/[\f\r\t\v]/g, "");
+            page_uri[i] = 'https://service.cloud.teu.ac.jp' + $(elem).find('p > a:nth-child(2), a').attr('href');
+            tag_list[i] = $(`#tab2 > .front_news_list > li:nth-child(${i+1}) > span`).toArray().map((ele, s, arr) => {
+                arr = $(ele).text();
+                return arr;
+            });
+        });
+    $('#tab1 > .front_news_list > li').each((i, elem) => {
+        sig_day[i] = $(elem).find('datetime').text().replace(/[\f\r\t\v]/g, "");
+        sig_title[i] = $(elem).find('p > a:nth-child(2), a > p').text().replace(/[\f\r\t\v]/g, "");
+        });
     for (let s = 0; s < page_uri.length; s++) {
         let page_context = (await axios.get(page_uri[s], {
             withCredentials: true, 
@@ -46,24 +57,23 @@ async function getPage(uri) {
         const $2 = cheerio.load(page_context);
         $2('.post > .entry-body > p').each((n, elem) => {
             context_fragment.push($2(elem).text().replace(/[\f\r\n\t\v]/g, ""));
-        })
+        });
         let fragment_list = context_fragment.filter(v => v.length > 2).join();
         fragment_list = fragment_list.replace(/,/g, "");
         context.push(fragment_list);
+        let isSignificant = 0;
+        const sig_checker = sig_title.indexOf(`${title[s]}`);
+        if (sig_checker.length != -1) {
+            if(sig_day[`${sig_checker}`] == day[s]) {
+                isSignificant = 1;
+            }
+        }
         titles_arr.push({
+            day: day[s], 
             title: title[s], 
             uri: page_uri[s],
-            isSignificant: /重要/.test(tag_list[s]),
-            isAll: /全学部/.test(tag_list[s]),
-            isCS: /CS/.test(tag_list[s]),
-            isES: /ES/.test(tag_list[s]),
-            isBS: /BS/.test(tag_list[s]),
-            isMS: /MS/.test(tag_list[s]),
-            isHS: /HS/.test(tag_list[s]),
-            isDS: /DS/.test(tag_list[s]),
-            isGraduate_hachi: /院八/.test(tag_list[s]),
-            isGraduate_kou: /院工学/.test(tag_list[s]),
-            isGraduate_DS: /院DS/.test(tag_list[s]),
+            tag_list: tag_list[s],
+            isSignificant: isSignificant == 1,
             context: context[s]
         });
     }
@@ -110,7 +120,5 @@ async function login() {
 (async () => {
     const uri = 'https://service.cloud.teu.ac.jp/inside2/hachiouji/computer_science/';
     const result_data = await getPage(uri);
-    const result_json = JSON.stringify(result_data);
-    const decode_json = JSON.parse(result_json);
-    console.log(decode_json);
+    console.log(result_data);
 })();
