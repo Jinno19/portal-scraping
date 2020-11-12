@@ -37,10 +37,6 @@ async function getPage(uri) {
             day[i] = $(elem).find('datetime').text().replace(/[\f\r\t\v]/g, "");
             title[i] = $(elem).find('p > a:nth-child(2), a > p').text().replace(/[\f\r\t\v]/g, "");
             page_uri[i] = 'https://service.cloud.teu.ac.jp' + $(elem).find('p > a:nth-child(2), a').attr('href');
-            tag_list[i] = $(`#tab2 > .front_news_list > li:nth-child(${i+1}) > span`).toArray().map((ele, s, arr) => {
-                arr = $(ele).text();
-                return arr;
-            });
         });
     $('#tab1 > .front_news_list > li').each((i, elem) => {
         sig_day[i] = $(elem).find('datetime').text().replace(/[\f\r\t\v]/g, "");
@@ -61,19 +57,22 @@ async function getPage(uri) {
         let fragment_list = context_fragment.filter(v => v.length > 2).join();
         fragment_list = fragment_list.replace(/,/g, "");
         context.push(fragment_list);
-        let isSignificant = 0;
-        const sig_checker = sig_title.indexOf(`${title[s]}`);
-        if (sig_checker.length != -1) {
-            if(sig_day[`${sig_checker}`] == day[s]) {
-                isSignificant = 1;
+        const tag_list = $(`#tab2 > .front_news_list > li:nth-child(${s+1}) > span`).toArray().map((ele, s, arr) => {
+            arr = $(ele).text();
+            return arr;
+        });
+        const sig_checker = tag_list.indexOf('重要');
+        if (sig_checker == -1) {
+            const siglist_checker = sig_title.indexOf(`${title[s]}`);
+            if (siglist_checker != -1 && sig_day[`${siglist_checker}`] == day[s]) {
+                tag_list.push('重要');
             }
         }
         titles_arr.push({
             day: day[s], 
             title: title[s], 
             uri: page_uri[s],
-            tag_list: tag_list[s],
-            isSignificant: isSignificant == 1,
+            tag_list: tag_list,
             context: context[s]
         });
     }
