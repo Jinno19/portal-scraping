@@ -82,20 +82,22 @@ async function getPage(uri) {
 async function login() {
     process.on('unhandledRejection', console.dir);
 
-    const browser = await puppeteer.launch({headless: false});
+    const browser = await puppeteer.launch();
 
     const page = await browser.newPage();
     await page.goto('https://service.cloud.teu.ac.jp/portal/inside', {waitUntil: 'networkidle0'});
     
-    await page.waitFor(2500);
-    await page.click('#identifierId');
-    await page.type('#identifierId', ACCOUNT_EMAIL);
-    await page.click('.qhFLie > #identifierNext > .VfPpkd-dgl2Hf-ppHlrf-sM5MNb > .VfPpkd-LgbsSe > .VfPpkd-RLmnJb');
+    await page.waitForSelector('input#next');
+    const email_xpath = '//*[@id="identifierId"]|//*[@id="Email"]';
+    await (await page.$x(email_xpath))[0].click();
+    await (await page.$x(email_xpath))[0].type(ACCOUNT_EMAIL);
+    await page.click('input#next');
 
-    await page.waitFor(3500);
-    await page.click('#password > .aCsJod > .aXBtI > .Xb9hP > .whsOnd');
-    await page.type('#password > .aCsJod > .aXBtI > .Xb9hP > .whsOnd', ACCOUNT_PASS);
-    await page.click('.qhFLie > #passwordNext > .VfPpkd-dgl2Hf-ppHlrf-sM5MNb > .VfPpkd-LgbsSe > .VfPpkd-RLmnJb');
+    await page.waitForSelector('input#submit');
+    const password_xpath = '//*[@id="password"]/div[1]/div/div[1]/input|//*[@id="password"]';
+    await (await page.$x(password_xpath))[0].click();
+    await (await page.$x(password_xpath))[0].type(ACCOUNT_PASS);
+    await page.click('input#submit');
     await page.waitForNavigation({waitUntil: ['load', 'networkidle2']});
 
     const isLogin = await page.evaluate(()=> {
