@@ -10,15 +10,17 @@
     "cheerio": "^1.0.0-rc.3",
     "cheerio-tableparser": "^1.0.1",
     "dotenv": "^8.2.0",
+    "log4js": "^6.3.0",
     "node-cron": "^2.0.3",
     "puppeteer": "^1.20.0",
     "request": "^2.88.2",
     "tough-cookie-filestore": "0.0.1"
   },
   "scripts": {
-    "start": "node -r dotenv/config", 
+    "start": "node -r dotenv/config",
     "getCookie": "node getCookie.js",
-    "getTitle": "node getTitle.js"
+    "getTitle": "node getTitle.js",
+    "watch:getnewinfo": "forever start -a --watch --watchIgnore --uid getnewinfo -c \"node -r dotenv/config\" get_newinfo_For_axios.js"
   },
   "devDependencies": {
     "mysql": "^2.18.1"
