@@ -39,13 +39,13 @@ export async function login() {
     const email_xpath = '//*[@id="identifierId"]|//*[@id="Email"]';
     await (await page.$x(email_xpath))[0].click();
     await (await page.$x(email_xpath))[0].type(`${process.env.USER_ID}@edu.teu.ac.jp`);
-    await page.click('input#next');
-
-    await page.waitForSelector('input#submit');
     let html = await page.$eval('html', item => {
         return item.innerHTML;
     });
     console.log(html);
+    await page.click('input#next');
+
+    await page.waitForSelector('input#submit');
     const password_xpath = '//*[@id="password"]/div[1]/div/div[1]/input|//*[@id="password"]';
     await (await page.$x(password_xpath))[0].click();
     await (await page.$x(password_xpath))[0].type(process.env.PASSWORD);
