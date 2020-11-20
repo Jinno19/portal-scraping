@@ -11,7 +11,7 @@ export async function login() {
         await axios.get('https://service.cloud.teu.ac.jp/portal/index', {headers: {Cookie}});
         const Page_uri = location.href;
         console.log(Page_uri);
-        if (!/Google.com/.test(Page_uri)) {
+        if (!/Google.com/i.test(Page_uri)) {
             return;
         }
     } catch {}
@@ -30,7 +30,6 @@ export async function login() {
 
     const page = await browser.newPage();
     await page.goto('https://service.cloud.teu.ac.jp/portal/inside', {waitUntil: 'networkidle0'});
-    await page.setUserAgent('bot');
 
     let html = await page.url();
     console.log(html);
