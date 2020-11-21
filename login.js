@@ -10,12 +10,13 @@ export async function login() {
     process.on('unhandledRejection', console.dir);
 
     try {
-        const Cookie = getCookie();
-        console.log(Cookie);
+        const Cookie = 'auth_tkt=YzliNjdkZGFlNTM3ZjA3ZTcyMDIwNmZlNTNiMjdkZTc1ZmI4Y2JiZDE4MTg3ITE2MDU5NDYzMDE=;'
+        //console.log(Cookie);
         const data = await axios.get('https://service.cloud.teu.ac.jp/portal/index', {  
             withCredentials: true, 
             headers: {cookie: Cookie}
         });
+        console.log(data.data);
         if (/Tokyo University of Technology/i.test(data.data)) {
             return;
         }
