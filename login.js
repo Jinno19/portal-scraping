@@ -3,11 +3,14 @@ import fs from 'fs';
 
 import axios from 'axios';
 import AxiosCookieSupport from 'axios-cookiejar-support';
+import tough from 'tough-cookie';
 import puppeteer from 'puppeteer';
 
 const COOKIE_PATH = 'cookies.json';
 
 AxiosCookieSupport(axios);
+
+const cookieJar = new tough.CookieJar();
 
 export async function login() {
     process.on('unhandledRejection', console.dir);
@@ -15,7 +18,7 @@ export async function login() {
     try {
         const Cookie = getCookie();
         const data = await axios.get('https://service.cloud.teu.ac.jp/portal/index', {
-            jar: true,    
+            jar: cookieJar,    
             withCredentials: true, 
             headers: {cookie: Cookie}
         });
