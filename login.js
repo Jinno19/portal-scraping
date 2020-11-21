@@ -2,27 +2,20 @@
 import fs from 'fs';
 
 import axios from 'axios';
-import AxiosCookieSupport from 'axios-cookiejar-support';
-import tough from 'tough-cookie';
 import puppeteer from 'puppeteer';
 
 const COOKIE_PATH = 'cookies.json';
-
-AxiosCookieSupport(axios);
-
-const cookieJar = new tough.CookieJar();
 
 export async function login() {
     process.on('unhandledRejection', console.dir);
 
     try {
         const Cookie = getCookie();
-        const data = await axios.get('https://service.cloud.teu.ac.jp/portal/index', {
-            jar: cookieJar,    
+        console.log(Cookie);
+        const data = await axios.get('https://service.cloud.teu.ac.jp/portal/index', {  
             withCredentials: true, 
             headers: {cookie: Cookie}
         });
-        console.log(data.data);
         if (/Tokyo University of Technology/i.test(data.data)) {
             return;
         }
