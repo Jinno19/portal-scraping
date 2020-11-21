@@ -11,10 +11,8 @@ export async function login() {
 
     try {
         const Cookie = getCookie();
-        await axios.get('https://service.cloud.teu.ac.jp/portal/index', {headers: {Cookie}});
-        const Page_uri = location.href;
-        console.log(Page_uri);
-        if (!/Google.com/.test(Page_uri)) {
+        const data = await axios.get('https://service.cloud.teu.ac.jp/portal/index', {withCredentials: true, headers: {cookie: Cookie}});
+        if (/Tokyo University of Technology/i.test(data.data)) {
             return;
         }
     } catch {}
@@ -42,7 +40,7 @@ export async function login() {
     let html = await page.$eval('html', item => {
         return item.innerHTML;
     });
-    console.log(html);
+    //console.log(html);
     await page.click('input#next');
 
     await page.waitForSelector('input#submit');
