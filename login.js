@@ -13,7 +13,7 @@ export async function login() {
         const Cookie = getCookie();
         const data = await axios.get('https://service.cloud.teu.ac.jp/portal/index', {  
             withCredentials: true, 
-            headers: {cookie: Cookie},
+            headers: { cookie: Cookie },
         });
         if (/Tokyo University of Technology/i.test(data.data)) {
             return;
@@ -31,13 +31,13 @@ export async function login() {
             '--no-zygote',
             '--proxy-server=\'direct://\'',
             '--proxy-bypass-list=*',
-        ]});
+        ] });
 
     const page = await browser.newPage();
-    await page.goto('https://service.cloud.teu.ac.jp/portal/inside', {waitUntil: 'networkidle0'});
+    await page.goto('https://service.cloud.teu.ac.jp/portal/inside', { waitUntil: 'networkidle0' });
 
-    await page.screenshot({path: './test.png'});
     await page.waitForSelector('input#next');
+    await page.screenshot({ path: './test.png' });
     const emailXpath = '//*[@id="identifierId"]|//*[@id="Email"]';
     await (await page.$x(emailXpath))[0].click();
     await (await page.$x(emailXpath))[0].type(`${process.env.USER_ID}@edu.teu.ac.jp`);
@@ -48,9 +48,10 @@ export async function login() {
     await (await page.$x(passwordXpath))[0].click();
     await (await page.$x(passwordXpath))[0].type(process.env.PASSWORD);
     await page.click('input#submit');
-    await page.waitForNavigation({waitUntil: ['load', 'networkidle2']});
+    await page.waitForNavigation({ waitUntil: ['load', 'networkidle2'] });
 
     const isLogin = await page.evaluate(() => {
+        //eslint-disable-next-line no-undef
         const node = document.querySelectorAll('#content > form > table > tbody > tr:nth-child(1) > td > div > table > tbody > tr:nth-child(4) > td > input[type=submit]');
         return !node.length;
     });

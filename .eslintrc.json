@@ -3,9 +3,6 @@
         "node": true,
         "es2021": true
     },
-    "globals": {
-        "document": true
-    },
     "extends": [
         // "eslint:all",
         "eslint:recommended"
@@ -36,7 +33,7 @@
         "new-parens": [2, "always"],
         "no-duplicate-imports": [2, {"includeExports": true}],
         "no-extend-native": "error",
-        "object-curly-spacing": [2, "never"],
+        "object-curly-spacing": [2, "always"],
         "template-curly-spacing": [2, "never"],
         "arrow-spacing": "error",
         "space-before-function-paren": [

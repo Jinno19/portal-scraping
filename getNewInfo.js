@@ -3,7 +3,7 @@ import cheerio from 'cheerio';
 //import logger from './logger.js';
 //import cron from 'node-cron';
 
-import {login, getCookie} from './login.js';
+import { login, getCookie } from './login.js';
 
 async function getNewInformations(uri) {
     await login();
@@ -13,7 +13,7 @@ async function getNewInformations(uri) {
 
     const response = await axios.get(uri, {
         withCredentials: true,
-        headers: {Cookie: cookie},
+        headers: { Cookie: cookie },
     });
 
     const $ = cheerio.load(response.data);
@@ -43,7 +43,7 @@ async function getNewInformations(uri) {
     for (const information of informations) {
         const page = await axios.get(information.uri, {
             withCredentials: true,
-            headers: {Cookie: cookie},
+            headers: { Cookie: cookie },
         });
         const $ = cheerio.load(page.data);
         information.context = $('.post > .entry-body').text().replace(/[\f\r\n\t\v]/g, '');

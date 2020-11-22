@@ -8,16 +8,19 @@ const csReference = [];
 
 async function getReference(page) {
     let title = await page.evaluate(() => {
+        //eslint-disable-next-line no-undef
         let titles = Array.from(document.querySelectorAll('html > body > .normal > tbody > tr > td:nth-child(6)'), 
             a => a.textContent.replace(/[\n]/g, ''));
         return titles;
     });
     let instructor = await page.evaluate(() => {
+        //eslint-disable-next-line no-undef
         let instructors = Array.from(document.querySelectorAll('html > body > .normal > tbody > tr > td:nth-child(7)'), 
             a => a.textContent.replace(/[\n]/g, ''));
         return instructors;
     });
     const lectureLength = await page.evaluate(() => {
+        //eslint-disable-next-line no-undef
         let lecLength = document.querySelector('body > b:nth-child(5)').textContent.replace( /[^0-9]/g, '');
         return parseInt(lecLength);
     });
@@ -28,8 +31,10 @@ async function getReference(page) {
         await page.click('#tabs > ul > li:nth-child(2) > a');
         await page.waitForSelector('#tabs-2 > table > tbody > tr:nth-child(9) > th');
         let refTitle = await page.evaluate(() => {
+            //eslint-disable-next-line no-undef
             let isReference = document.querySelector('#tabs-2 > table > tbody > tr:nth-child(9) > th').textContent.replace(/[\n]/g, '').trim();
             if (isReference === '参考書') {
+                //eslint-disable-next-line no-undef
                 let rTitle = document.querySelector('#tabs-2 > table > tbody > tr:nth-child(9) > .syllabus-break-word');
                 return rTitle.textContent.replace(/[\n]/g, '').trim();
             } else {
@@ -61,7 +66,7 @@ async function getReference(page) {
             '--no-zygote',
             '--proxy-server=\'direct://\'',
             '--proxy-bypass-list=*',
-        ]});
+        ] });
     const page = await browser.newPage();
     await page.goto(REFERENCEINFORMATION_URL);
 
@@ -85,7 +90,7 @@ async function getReference(page) {
     await page.waitFor(3000);
     const csResult = await getReference(page);
     //await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/reference', CS_result);
-    console.log(util.inspect(csResult, {maxArrayLength: null}));
+    console.log(util.inspect(csResult, { maxArrayLength: null }));
     
     await browser.close();
 })();
