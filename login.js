@@ -10,13 +10,11 @@ export async function login() {
     process.on('unhandledRejection', console.dir);
 
     try {
-        const Cookie = 'auth_tkt=YzliNjdkZGFlNTM3ZjA3ZTcyMDIwNmZlNTNiMjdkZTc1ZmI4Y2JiZDE4MTg3ITE2MDU5NDYzMDE=;'
-        //console.log(Cookie);
+        const Cookie = getCookie();
         const data = await axios.get('https://service.cloud.teu.ac.jp/portal/index', {  
             withCredentials: true, 
             headers: {cookie: Cookie}
         });
-        console.log(data.data);
         if (/Tokyo University of Technology/i.test(data.data)) {
             return;
         }
@@ -38,14 +36,11 @@ export async function login() {
     const page = await browser.newPage();
     await page.goto('https://service.cloud.teu.ac.jp/portal/inside', {waitUntil: 'networkidle0'});
 
+    await page.screenshot({path: './test.png'});
     await page.waitForSelector('input#next');
     const email_xpath = '//*[@id="identifierId"]|//*[@id="Email"]';
     await (await page.$x(email_xpath))[0].click();
     await (await page.$x(email_xpath))[0].type(`${process.env.USER_ID}@edu.teu.ac.jp`);
-    let html = await page.$eval('html', item => {
-        return item.innerHTML;
-    });
-    //console.log(html);
     await page.click('input#next');
 
     await page.waitForSelector('input#submit');

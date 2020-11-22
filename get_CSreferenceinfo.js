@@ -50,7 +50,18 @@ async function getReference(page) {
     (async () => {
         process.on('unhandledRejection', console.dir);
 
-        const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({
+            args: [
+            '--lang=ja',
+            '--disable-gpu',
+            '--disable-dev-shm-usage',
+            '--disable-setuid-sandbox',
+            '--no-first-run',
+            '--no-sandbox',
+            '--no-zygote',
+            '--proxy-server=\'direct://\'',
+            '--proxy-bypass-list=*',
+        ]});
         const page = await browser.newPage();
         await page.goto(REFERENCEINFORMATION_URL);
 
