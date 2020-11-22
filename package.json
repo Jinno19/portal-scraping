@@ -11,6 +11,7 @@
     "cheerio": "^1.0.0-rc.3",
     "cheerio-tableparser": "^1.0.1",
     "dotenv": "^8.2.0",
+    "eslint": "^7.14.0",
     "log4js": "^6.3.0",
     "node-cron": "^2.0.3",
     "puppeteer": "^1.20.0",
@@ -21,12 +22,17 @@
     "tough-cookie-filestore": "0.0.1"
   },
   "scripts": {
+    "lint": "eslint",
     "start": "node -r dotenv/config",
     "getCookie": "node getCookie.js",
     "getTitle": "node getTitle.js",
     "watch:getnewinfo": "forever start -a --watch --watchIgnore --uid getnewinfo -c \"node -r dotenv/config\" get_newinfo_For_axios.js"
   },
   "devDependencies": {
+    "@babel/core": "^7.12.7",
+    "@babel/eslint-parser": "^7.12.1",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/preset-env": "^7.12.7",
     "mysql": "^2.18.1"
   },
   "type": "module"

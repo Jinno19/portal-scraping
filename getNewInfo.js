@@ -1,9 +1,9 @@
 import axios from 'axios';
 import cheerio from 'cheerio';
 //import logger from './logger.js';
-import cron from 'node-cron';
+//import cron from 'node-cron';
 
-import { login, getCookie } from './login.js';
+import {login, getCookie} from './login.js';
 
 async function getNewInformations(uri) {
     await login();
@@ -52,9 +52,9 @@ async function getNewInformations(uri) {
 }
 
 //cron.schedule('0 */10 * * * ', () => {
-    (async () => {
-        const result_data = await getNewInformations('https://service.cloud.teu.ac.jp/inside2/hachiouji/computer_science/');
-        //await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/new', result_data);
-        console.log(result_data);
-    })();
+(async () => {
+    const resultData = await getNewInformations('https://service.cloud.teu.ac.jp/inside2/hachiouji/computer_science/');
+    //await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/new', result_data);
+    console.log(resultData);
+})();
 //});
