@@ -34,7 +34,6 @@ export async function login() {
     const browser = await puppeteer.launch({
         args: [
             '--window-size=1280,720',
-            '--lang=ja',
             '--disable-gpu',
             '--disable-dev-shm-usage',
             '--disable-setuid-sandbox',
@@ -51,6 +50,7 @@ export async function login() {
     await page.setViewport({ width: 1280, height: 720 });
 
     await page.goto('https://service.cloud.teu.ac.jp/portal/inside', { waitUntil: 'networkidle0' });
+    await page.screenshot( { path: './test.png' });
     if (await page.$eval('html', element => /Tokyo University of Technology/img.test(element.textContent))) {
         logger.debug('already logged in');
 
