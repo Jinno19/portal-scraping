@@ -1,22 +1,24 @@
-import axios from 'axios';
+//import puppeteer from 'puppeteer';
 import cheerio from 'cheerio';
 //import logger from './logger.js';
 //import cron from 'node-cron';
 
-import { login, getCookie } from './login.js';
+import { main } from './login.js';
+import { app } from './main.js';
+
 
 async function getNewInformations(uri) {
-    await login();
-    const cookie = getCookie();
+    await main();
 
     const informations = [];
 
-    const response = await axios.get(uri, {
-        withCredentials: true,
-        headers: { Cookie: cookie },
+    const app2 = await app;
+    const page = (await app2.pages())[0];
+    await page.goto(uri);
+    let html = await page.$eval('html', html  => {
+        return html.innerHTML;
     });
-
-    const $ = cheerio.load(response.data);
+    const $ = cheerio.load(html);
 
     $('#tab2 > .front_news_list > li').each((_i, elem) => {
         informations.push({
@@ -41,13 +43,15 @@ async function getNewInformations(uri) {
     });
 
     for (const information of informations) {
-        const page = await axios.get(information.uri, {
-            withCredentials: true,
-            headers: { Cookie: cookie },
+        await page.goto(information.uri);
+        html = await page.$eval('html', html  => {
+            return html.innerHTML;
         });
-        const $ = cheerio.load(page.data);
+        const $ = cheerio.load(html);
         information.context = $('.post > .entry-body').text().replace(/[\f\r\n\t\v]/g, '');
     }
+
+    await app2.close();
     return  informations;
 }
 

@@ -4,19 +4,15 @@ import axios from 'axios';
 import cheerio from 'cheerio';
 //import cron from 'node-cron';
 
-import { login, getCookie } from './login.js';
+import { main } from './login.js';
 
 let lecturesArr = [];
 let pageNumber = 1;
 
 async function getLecturePage(uri) {
-    await login();
-    const cookie = getCookie();
+    await main();
 
-    let response = await axios.get(uri, {
-        withCredentials: true, 
-        headers: { Cookie: cookie },
-    });
+    let response = await axios.get(uri);
 
     const $ = cheerio.load(response.data);
 

@@ -1,27 +1,39 @@
-//@ts-check
-import fs from 'fs';
-
-import axios from 'axios';
+import log4js from 'log4js';
 import puppeteer from 'puppeteer';
 
-const COOKIE_PATH = 'cookies.json';
+const logger = log4js.getLogger('main');
+logger.level = 'all';
+
+export async function main() {
+    await login();
+    const app = await puppeteer.launch({
+        args: [
+            '--window-size=1280,720',
+            '--disable-gpu',
+            '--disable-dev-shm-usage',
+            '--disable-setuid-sandbox',
+            '--no-first-run',
+            '--no-sandbox',
+            '--no-zygote',
+            '--single-process',
+            '--proxy-server=\'direct://\'',
+            '--proxy-bypass-list=*',
+            `--user-data-dir=${process.cwd()}/data`,
+        ],
+    });
+    const page = (await app.pages())[0];
+    await page.setViewport({ width: 1280, height: 720 });
+    await page.goto('https://service.cloud.teu.ac.jp/portal/index', { waitUntil: ['load', 'networkidle2'] });
+    logger.info(await page.$eval('title', elm => elm.textContent));
+    await app.close();
+}
+
+main();
 
 export async function login() {
-    process.on('unhandledRejection', console.dir);
-
-    try {
-        const Cookie = getCookie();
-        const data = await axios.get('https://service.cloud.teu.ac.jp/portal/index', {  
-            withCredentials: true, 
-            headers: { cookie: Cookie },
-        });
-        if (/Tokyo University of Technology/i.test(data.data)) {
-            return;
-        }
-    } catch {}
-
     const browser = await puppeteer.launch({
         args: [
+            '--window-size=1280,720',
             '--lang=ja',
             '--disable-gpu',
             '--disable-dev-shm-usage',
@@ -31,27 +43,45 @@ export async function login() {
             '--no-zygote',
             '--proxy-server=\'direct://\'',
             '--proxy-bypass-list=*',
-        ] });
+            `--user-data-dir=${process.cwd()}/data`,
+        ],
+    });
 
-    const page = await browser.newPage();
+    const page = (await browser.pages())[0];
+    await page.setViewport({ width: 1280, height: 720 });
+
     await page.goto('https://service.cloud.teu.ac.jp/portal/inside', { waitUntil: 'networkidle0' });
+    if (await page.$eval('html', element => /Tokyo University of Technology/img.test(element.textContent))) {
+        logger.debug('already logged in');
 
-    await page.waitForSelector('input#next');
-    await page.screenshot({ path: './test.png' });
-    const emailXpath = '//*[@id="identifierId"]|//*[@id="Email"]';
-    await (await page.$x(emailXpath))[0].click();
-    await (await page.$x(emailXpath))[0].type(`${process.env.USER_ID}@edu.teu.ac.jp`);
-    await page.click('input#next');
+        await browser.close();
+        return;
+    }
 
-    await page.waitForSelector('input#submit');
-    const passwordXpath = '//*[@id="password"]/div[1]/div/div[1]/input|//*[@id="password"]';
-    await (await page.$x(passwordXpath))[0].click();
-    await (await page.$x(passwordXpath))[0].type(process.env.PASSWORD);
-    await page.click('input#submit');
+    logger.debug('logging in');
+
+    await page.waitForSelector('input[type="email"]', { visible: true });
+
+    await page.click('input[type="email"]');
+    await page.type('input[type="email"]', `${process.env.USER_ID}@edu.teu.ac.jp`);
+    try {
+        await page.click('#identifierNext > div > button');
+    } catch {
+        await page.click('input#next');
+    }
+
+    await page.waitForSelector('input[type="password"]', { visible: true });
+    await page.click('input[type="password"]');
+    await page.type('input[type="password"]', process.env.PASSWORD);
+    try {
+        await page.click('#passwordNext > div > button');
+    } catch {
+        await page.click('input#submit');
+    }
     await page.waitForNavigation({ waitUntil: ['load', 'networkidle2'] });
 
     const isLogin = await page.evaluate(() => {
-        //eslint-disable-next-line no-undef
+        // eslint-disable-next-line no-undef
         const node = document.querySelectorAll('#content > form > table > tbody > tr:nth-child(1) > td > div > table > tbody > tr:nth-child(4) > td > input[type=submit]');
         return !node.length;
     });
@@ -63,18 +93,7 @@ export async function login() {
         await page.click('#content > form > table > tbody > tr:nth-child(1) > td > div > table > tbody > tr:nth-child(4) > td > input[type=submit]');
     }
 
-    const afterCookies = await page.cookies();
-    fs.writeFileSync(COOKIE_PATH, JSON.stringify(afterCookies));
+    logger.debug('logged in');
 
     await browser.close();
-}
-
-export function getCookie() {
-    try {
-        return [JSON.parse(fs.readFileSync(COOKIE_PATH, 'utf-8'))
-            .find(obj => obj.name === 'auth_tkt')]
-            .map(obj => `${obj.name}=${obj.value};`)[0];
-    } catch {
-        return '';
-    }
 }
