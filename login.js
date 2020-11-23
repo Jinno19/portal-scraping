@@ -32,6 +32,7 @@ main();
 
 export async function login() {
     const browser = await puppeteer.launch({
+        headless: true, 
         args: [
             '--window-size=1280,720',
             '--disable-gpu',
