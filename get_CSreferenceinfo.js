@@ -13,6 +13,17 @@ async function loginProcesser(page) {
     await page.click('body > center > form > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(4) > td:nth-child(2) > input[type=password]');
     await page.type('body > center > form > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(4) > td:nth-child(2) > input[type=password]', process.env.PASSWORD);
     await page.click('body > center > form > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > input[type=image]');
+
+    await page.waitForTimeout(1000);
+
+    const content = await page.$eval('html', html => {
+        return html.innerHTML;
+    });
+    if (/タイムアウト/.test(content)) {
+        loginProcesser(page);
+    } else {
+        return '';
+    }
 }
 
 async function getReference(page) {
@@ -65,7 +76,6 @@ async function getReference(page) {
     process.on('unhandledRejection', console.dir);
 
     const browser = await puppeteer.launch({
-        headless: false, 
         args: [
             '--lang=ja',
             '--disable-gpu',
@@ -79,12 +89,8 @@ async function getReference(page) {
         ] });
     const page = await browser.newPage();
     await page.goto(REFERENCEINFORMATION_URL);
-    
-    try {
-        loginProcesser(page);
-    } catch {
-        loginProcesser(page);
-    }
+
+    await loginProcesser(page);
 
     await page.goto(SYLLABUS_URL);
 
@@ -97,7 +103,7 @@ async function getReference(page) {
     await page.select('table > tbody > tr:nth-child(11) > td > select', '500');
     await page.click('table > tbody > tr:nth-child(11) > td > select');
     await page.click('#jikanwariSearchForm > table > tbody > tr:nth-child(12) > td > p > input[type=button]');
-    await page.waitFor(3000);
+    await page.waitForTimeout(3000);
     const csResult = await getReference(page);
     //await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/reference', CS_result);
     console.log(util.inspect(csResult, { maxArrayLength: null }));
