@@ -1,10 +1,10 @@
-import util from 'util';
 
 import puppeteer from 'puppeteer';
+import axios from 'axios';
 
 const REFERENCEINFORMATION_URL = 'https://kyo-web.teu.ac.jp/campusweb/';
 const SYLLABUS_URL = 'https://kyo-web.teu.ac.jp/campusweb/campussquare.do?_flowId=SYW0001000-flow';
-const csReference = [];
+let csReference = '';
 let startNumber = 0;
 
 async function loginProcesser(page) {
@@ -28,13 +28,13 @@ async function loginProcesser(page) {
 }
 
 async function getReference(page) {
-    let title = await page.evaluate(() => {
+    let titles = await page.evaluate(() => {
         //eslint-disable-next-line no-undef
         let titles = Array.from(document.querySelectorAll('html > body > .normal > tbody > tr > td:nth-child(6)'), 
             a => a.textContent.replace(/[\n]/g, ''));
         return titles;
     });
-    let instructor = await page.evaluate(() => {
+    let instructors = await page.evaluate(() => {
         //eslint-disable-next-line no-undef
         let instructors = Array.from(document.querySelectorAll('html > body > .normal > tbody > tr > td:nth-child(7)'), 
             a => a.textContent.replace(/[\n]/g, ''));
@@ -45,7 +45,7 @@ async function getReference(page) {
         let lecLength = document.querySelector('body > b:nth-child(5)').textContent.replace( /[^0-9]/g, '');
         return parseInt(lecLength);
     });
-    await contextGeter(title, instructor, lectureLength, page, startNumber);
+    await contextGeter(titles, instructors, lectureLength, page, startNumber);
 
     return csReference;
 }
@@ -69,20 +69,23 @@ async function contextGeter(title, instructor, lectureLength, page, number) {
                     return '参考書の指定はありません。';
                 }
             });
-            console.log(title[i-1]);
-            console.log(instructor[i-1]);
-            console.log(refTitle);
 
-            csReference.push({
-                title: title[i-1], 
-                instructor: instructor[i-1], 
-                Reference: refTitle,
-            });
+            const lecTitle = title[i-1].toString().replace(/[\f\r\t\v]/g, '');
+            const lecInstructor = instructor[i-1].toString().replace(/[\f\r\t\v]/g, '');
+
+            csReference = refTitle.toString().replace(/[\f\r\t\v]/g, '');
+            startNumber++;
+
+            await postAxios(lecTitle, lecInstructor); 
+
+            console.log(lecTitle);
+            console.log(lecInstructor);
+            console.log(csReference);
 
             let number = i;
             console.log(number);
 
-            startNumber++;
+            await page.waitFor(3000);
 
             await Promise.all([
                 page.waitForNavigation({ waitUntil: 'load' }),
@@ -90,8 +93,8 @@ async function contextGeter(title, instructor, lectureLength, page, number) {
             ]);
         }
 
-    } catch {
-        console.error('continue.');
+    } catch (err) {
+        console.error(err + '\ncontinue.');
         const pointer = await page.evaluate(() => {
             // eslint-disable-next-line no-undef
             const node = document.querySelectorAll('body > .normal > tbody > tr:nth-child(1) > td:nth-child(8) > input');
@@ -104,6 +107,28 @@ async function contextGeter(title, instructor, lectureLength, page, number) {
             console.log('input form disappear…');
             await page.goBack();
             await contextGeter(title, instructor, lectureLength, page, startNumber);
+        }
+    }
+}
+
+async function postAxios(title, instructor) {
+    try {
+        // eslint-disable-next-line no-unused-vars
+        let res = await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/reference', 
+            [
+                {
+                    // eslint-disable-next-line
+                    "title": title,
+                    // eslint-disable-next-line 
+                    "instructor": instructor, 
+                    // eslint-disable-next-line
+                    "Reference": csReference
+                // eslint-disable-next-line
+                }
+            ]);
+    } catch (err) {
+        if (/429/.test(err)) {
+            await postAxios(title, instructor);
         }
     }
 }
@@ -142,10 +167,8 @@ async function contextGeter(title, instructor, lectureLength, page, number) {
     await page.click('#jikanwariSearchForm > table > tbody > tr:nth-child(12) > td > p > input[type=button]');
     await page.waitFor(3000);
 
-    const csResult = await getReference(page);
-    //await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/reference', CS_result);
-    console.log(util.inspect(csResult, { maxArrayLength: null }));
-    
+    await getReference(page);
+
     await browser.close();
 })();
 //});
