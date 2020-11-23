@@ -6,6 +6,15 @@ const REFERENCEINFORMATION_URL = 'https://kyo-web.teu.ac.jp/campusweb/';
 const SYLLABUS_URL = 'https://kyo-web.teu.ac.jp/campusweb/campussquare.do?_flowId=SYW0001000-flow';
 const csReference = [];
 
+async function loginProcesser(page) {
+    await page.waitForSelector('body > center > form > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > input[type=image]');
+    await page.click('body > center > form > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(2) > td:nth-child(2) > input[type=text]');
+    await page.type('body > center > form > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(2) > td:nth-child(2) > input[type=text]', process.env.USER_ID);
+    await page.click('body > center > form > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(4) > td:nth-child(2) > input[type=password]');
+    await page.type('body > center > form > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(4) > td:nth-child(2) > input[type=password]', process.env.PASSWORD);
+    await page.click('body > center > form > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > input[type=image]');
+}
+
 async function getReference(page) {
     let title = await page.evaluate(() => {
         //eslint-disable-next-line no-undef
@@ -56,6 +65,7 @@ async function getReference(page) {
     process.on('unhandledRejection', console.dir);
 
     const browser = await puppeteer.launch({
+        headless: false, 
         args: [
             '--lang=ja',
             '--disable-gpu',
@@ -69,19 +79,19 @@ async function getReference(page) {
         ] });
     const page = await browser.newPage();
     await page.goto(REFERENCEINFORMATION_URL);
-
-    await page.click('body > center > form > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(2) > td:nth-child(2) > input[type=text]');
-    await page.type('body > center > form > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(2) > td:nth-child(2) > input[type=text]', process.env.USER_ID);
-    await page.click('body > center > form > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(4) > td:nth-child(2) > input[type=password]');
-    await page.type('body > center > form > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(4) > td:nth-child(2) > input[type=password]', process.env.PASSWORD);
-    await page.click('body > center > form > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td > input[type=image]');
+    
+    try {
+        loginProcesser(page);
+    } catch {
+        loginProcesser(page);
+    }
 
     await page.goto(SYLLABUS_URL);
 
-    await page.waitForSelector('table #jikanwariShozokuCode');
+    await page.waitForSelector('table > tbody > tr:nth-child(2) > td:nth-child(2) > #jikanwariShozokuCode');
 
-    await page.click('table #jikanwariShozokuCode');
-    await page.select('table #jikanwariShozokuCode', 'CS');
+    await page.click('table > tbody > tr:nth-child(2) > td:nth-child(2) > #jikanwariShozokuCode');
+    await page.select('table > tbody > tr:nth-child(2) > td:nth-child(2) > #jikanwariShozokuCode', 'CS');
 
     await page.click('table > tbody > tr:nth-child(11) > td > select');
     await page.select('table > tbody > tr:nth-child(11) > td > select', '500');
