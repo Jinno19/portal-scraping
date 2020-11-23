@@ -78,10 +78,6 @@ async function contextGeter(title, instructor, lectureLength, page, number) {
 
             await postAxios(lecTitle, lecInstructor); 
 
-            console.log(lecTitle);
-            console.log(lecInstructor);
-            console.log(csReference);
-
             let number = i;
             console.log(number);
 
@@ -126,6 +122,9 @@ async function postAxios(title, instructor) {
                 // eslint-disable-next-line
                 }
             ]);
+        console.log(title);
+        console.log(instructor);
+        console.log(csReference);
     } catch (err) {
         if (/429/.test(err)) {
             await postAxios(title, instructor);
