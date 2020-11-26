@@ -126,6 +126,7 @@ async function postAxios(title, instructor) {
         console.log(instructor);
         console.log(csReference);
     } catch (err) {
+        console.error(err + '\ncontinue');
         if (/429/.test(err)) {
             await postAxios(title, instructor);
         }
@@ -147,7 +148,8 @@ async function postAxios(title, instructor) {
             '--no-zygote',
             '--proxy-server=\'direct://\'',
             '--proxy-bypass-list=*',
-        ] });
+        ],
+    });
     const page = await browser.newPage();
     await page.goto(REFERENCEINFORMATION_URL);
 

@@ -50,7 +50,6 @@ export async function login() {
     await page.setViewport({ width: 1280, height: 720 });
 
     await page.goto('https://service.cloud.teu.ac.jp/portal/inside', { waitUntil: 'networkidle0' });
-    await page.screenshot( { path: './test.png' });
     if (await page.$eval('html', element => /Tokyo University of Technology/img.test(element.textContent))) {
         logger.debug('already logged in');
 

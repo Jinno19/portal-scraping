@@ -2,6 +2,7 @@
 import cheerio from 'cheerio';
 //import logger from './logger.js';
 //import cron from 'node-cron';
+import axios from 'axios';
 
 import { main } from './login.js';
 import { app } from './main.js';
@@ -52,13 +53,25 @@ async function getNewInformations(uri) {
     }
 
     await app2.close();
+    await postAxios(informations);
     return  informations;
+}
+
+async function postAxios(informations) {
+    try {
+        // eslint-disable-next-line no-unused-vars
+        let res = await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/new', informations);
+        console.log(informations);
+    } catch (err) {
+        console.error(err + '\ncontinue');
+        if (/429/.test(err)) {
+            await postAxios(informations);
+        }
+    }
 }
 
 //cron.schedule('0 */10 * * * ', () => {
 (async () => {
-    const resultData = await getNewInformations('https://service.cloud.teu.ac.jp/inside2/hachiouji/computer_science/');
-    //await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/new', result_data);
-    console.log(resultData);
+    await getNewInformations('https://service.cloud.teu.ac.jp/inside2/hachiouji/computer_science/');
 })();
 //});

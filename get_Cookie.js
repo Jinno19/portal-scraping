@@ -1,59 +1,63 @@
 import fs from 'fs';
 import puppeteer from 'puppeteer';
 
-const ACCOUNT_EMAIL = process.env.ACCOUNT_EMAIL;
-const ACCOUNT_PASS = process.env.ACCOUNT_PASS;
-const USERID = process.env.USERID;
-const INFORMATION_URL = "https://service.cloud.teu.ac.jp/portal/inside";
+const INFORMATION_URL = 'https://service.cloud.teu.ac.jp/portal/inside';
 
 const COOKIES_PATH = 'cookies.json';
 
-const requireEnvs = [
-    ACCOUNT_EMAIL,
-    ACCOUNT_PASS,
-    INFORMATION_URL,
-    USERID
-];
 
-
-(async () => {
-    for (let requireEnv of requireEnvs) {
-        if (requireEnv == undefined) {
-            console.log('local env is not set.');
-            return;
-        }
-    }
+export async function getCookie() {
 
     process.on('unhandledRejection', console.dir);
 
-    const browser = await puppeteer.launch({headless: false});
+    const browser = await puppeteer.launch({
+        args: [
+            '--window-size=1280,720',
+            '--disable-gpu',
+            '--disable-dev-shm-usage',
+            '--disable-setuid-sandbox',
+            '--no-first-run',
+            '--no-sandbox',
+            '--no-zygote',
+            '--proxy-server=\'direct://\'',
+            '--proxy-bypass-list=*',
+        ],
+    });
 
     const page = await browser.newPage();
 
-    await page.goto(INFORMATION_URL, {waitUntil: 'networkidle0'});
+    await page.goto(INFORMATION_URL, { waitUntil: 'networkidle0' });
 
-    //メールアドレス入力
-    await page.waitForSelector('#identifierId');
-    await page.click('#identifierId');
-    await page.type('#identifierId', ACCOUNT_EMAIL);
-    await page.click('.qhFLie > #identifierNext > .VfPpkd-dgl2Hf-ppHlrf-sM5MNb > .VfPpkd-LgbsSe > .VfPpkd-RLmnJb');
+    await page.waitForSelector('input[type="email"]', { visible: true });
 
-    //パスワード入力
-    await page.waitFor(3500);
-    await page.click('#password > .aCsJod > .aXBtI > .Xb9hP > .whsOnd');
-    await page.type('#password > .aCsJod > .aXBtI > .Xb9hP > .whsOnd', ACCOUNT_PASS);
-    await page.click('.qhFLie > #passwordNext > .VfPpkd-dgl2Hf-ppHlrf-sM5MNb > .VfPpkd-LgbsSe > .VfPpkd-RLmnJb');
-    await page.waitForNavigation({waitUntil: ['load', 'networkidle2']});
+    await page.click('input[type="email"]');
+    await page.type('input[type="email"]', `${process.env.USER_ID}@edu.teu.ac.jp`);
+    try {
+        await page.click('#identifierNext > div > button');
+    } catch {
+        await page.click('input#next');
+    }
 
-    const isLogin = await page.evaluate(()=> {
+    await page.waitForSelector('input[type="password"]', { visible: true });
+    await page.click('input[type="password"]');
+    await page.type('input[type="password"]', process.env.PASSWORD);
+    try {
+        await page.click('#passwordNext > div > button');
+    } catch {
+        await page.click('input#submit');
+    }
+    await page.waitForNavigation({ waitUntil: ['load', 'networkidle2'] });
+
+    const isLogin = await page.evaluate(() => {
+        // eslint-disable-next-line
         const node = document.querySelectorAll('#content > form > table > tbody > tr:nth-child(1) > td > div > table > tbody > tr:nth-child(4) > td > input[type=submit]');
         return node.length? false : true;
     });
 
     if (!isLogin) {
         await page.click('.input_f > tbody > tr:nth-child(2) > td > input');
-        await page.type('.input_f > tbody > tr:nth-child(2) > td > input', USERID);
-        await page.type('.input_f > tbody > tr:nth-child(3) > td > input', ACCOUNT_PASS);
+        await page.type('.input_f > tbody > tr:nth-child(2) > td > input', process.env.USER_ID);
+        await page.type('.input_f > tbody > tr:nth-child(3) > td > input', process.env.PASSWORD);
         await page.click('#content > form > table > tbody > tr:nth-child(1) > td > div > table > tbody > tr:nth-child(4) > td > input[type=submit]');
     }
 
@@ -61,5 +65,5 @@ const requireEnvs = [
     fs.writeFileSync(COOKIES_PATH, JSON.stringify(afterCookies));
 
     await browser.close();
-    console.log('complete.')
-})();
+    console.log('complete.');
+}
