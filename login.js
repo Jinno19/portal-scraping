@@ -22,7 +22,6 @@ export async function main() {
         ],
     });
     const page = (await app.pages())[0];
-    await page.setViewport({ width: 1280, height: 720 });
     await page.goto('https://service.cloud.teu.ac.jp/portal/index', { waitUntil: ['load', 'networkidle2'] });
     logger.info(await page.$eval('title', elm => elm.textContent));
     await app.close();
@@ -30,7 +29,7 @@ export async function main() {
 
 main();
 
-export async function login() {
+async function login() {
     const browser = await puppeteer.launch({
         args: [
             '--window-size=1280,720',
@@ -47,8 +46,6 @@ export async function login() {
     });
 
     const page = (await browser.pages())[0];
-    await page.setViewport({ width: 1280, height: 720 });
-
     await page.goto('https://service.cloud.teu.ac.jp/portal/inside', { waitUntil: 'networkidle0' });
     if (await page.$eval('html', element => /Tokyo University of Technology/img.test(element.textContent))) {
         logger.debug('already logged in');
