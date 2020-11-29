@@ -12,4 +12,4 @@ jobs:
         with:
           project-id: ${{ secrets.PROJECT_ID }}
           auth-token: ${{ secrets.AUTH_TOKEN }}
-      - run: "curl -H \"Content-Type: application/json\" -X POST -d '{\"content\": \"Deployed `github:Jinno19/portal-scraping` to `glitch:portal-scraping`\"}' ${{secrets.DISCORD_WEBHOOK_URL}}"
+      - run: "curl -H \"Content-Type: application/json\" -X POST -d '{\"content\": \"Deployed `github:Jinno19/portal-scraping` to `glitch:tut-scraping`\"}' ${{secrets.DISCORD_WEBHOOK_URL}}"
