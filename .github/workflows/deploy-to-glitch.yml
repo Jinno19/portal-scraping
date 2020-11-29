@@ -1,4 +1,4 @@
-name: Deploy to Glitch
+name: Deploy To Glitch
 on:
   push:
     branches:
