@@ -1,9 +1,8 @@
-name: Deploy To Glitch
+name: Deploy to Glitch
 on:
   push:
     branches:
       - master
-    workflow_dispatch:
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -11,5 +10,6 @@ jobs:
       - name: Deploy To Glitch
         uses: kanadgupta/glitch-sync@master
         with:
-          project-id: '${{ secrets.PROJECT_ID }}'
-          auth-token: '${{ secrets.AUTH_TOKEN }}'
+          project-id: ${{ secrets.PROJECT_ID }}
+          auth-token: ${{ secrets.AUTH_TOKEN }}
+      - run: "curl -H \"Content-Type: application/json\" -X POST -d '{\"content\": \"Deployed `github:Jinno19/portal-scraping` to `glitch:portal-scraping`\"}' ${{secrets.DISCORD_WEBHOOK_URL}}"
