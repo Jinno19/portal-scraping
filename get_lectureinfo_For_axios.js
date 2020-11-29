@@ -1,36 +1,25 @@
-import fs from 'fs';
-import { performance } from 'perf_hooks';
-
-import axios from 'axios';
+//import puppeteer from 'puppeteer';
 import cheerio from 'cheerio';
+//import logger from './logger.js';
 //import cron from 'node-cron';
+//import axios from 'axios';
 
-import { login } from './cookiesLogin.js';
+import { main } from './login.js';
+import { app } from './main.js';
 
-const COOKIE_PATH = 'cookies.json';
-
-let lecturesArr = [];
-let pageNumber = 1;
 
 async function getLecturePage(uri) {
+    await main();
 
-    const json = fs.readFileSync(COOKIE_PATH, 'utf-8');
-    const value = JSON.parse(json).find(obj => obj.name === 'auth_tkt').value;
-    const cookie = `auth_tkt=${value};`;
+    const lecturesArr = [];
 
-    let response = (await axios.get(uri, {
-        withCredentials: true,
-        headers: {
-            Cookie: cookie,
-        }, 
-    }).catch(console.error));
-
-    if (/Google アカウントでログイン/.test(response.data)) {
-        await login();
-        response = getLecturePage(uri);
-        return response;
-    }
-    const $ = cheerio.load(response.data);
+    const app2 = await app;
+    const page = (await app2.pages())[0];
+    await page.goto(uri);
+    let html = await page.$eval('html', html => {
+        return html.innerHTML;
+    });
+    const $ = cheerio.load(html);
 
     let tableNumber = 13;
     $('.searchTable').each(() => {
@@ -47,15 +36,16 @@ async function getLecturePage(uri) {
         });
         tableNumber ++;
     });
-
-    postAxios(lecturesArr);
     
     if (/次へ/g.test($('.feed_page > a').text()) === true) {
-        pageNumber ++;
-        let uri2 = uri + `page/${pageNumber}/`;
+        tableNumber ++;
+        let uri2 = uri + `page/${tableNumber}/`;
         let result = getLecturePage(uri2);
         return result;
     }
+  
+    await app2.close();
+    postAxios(lecturesArr);
     return lecturesArr;
 }
 
@@ -74,9 +64,6 @@ async function postAxios(arr) {
 
 //cron.schedule('0 */10 * * * ', () => {
 (async () => {
-    const start = performance.now();
     await getLecturePage('https://service.cloud.teu.ac.jp/inside2/hachiouji/hachioji_common/cancel/');
-    const end = performance.now();
-    console.log(end - start);
 })();
 //});

@@ -49,6 +49,7 @@ export async function login() {
     }
 
     const afterCookies = await page.cookies();
+    console.log(afterCookies);
     fs.writeFileSync(COOKIE_PATH, JSON.stringify(afterCookies));
 
     console.log('complete.');
