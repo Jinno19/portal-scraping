@@ -30,7 +30,6 @@ export async function main() {
 
 main();
 
-
 async function login() {
     const browser = await puppeteer.launch({
         args: [
