@@ -9,6 +9,7 @@ const COOKIE_PATH = 'cookies.json';
 export async function login() {
     process.on('unhandledRejection', console.dir);
 
+
     try {
         const Cookie = getCookie();
         const data = await axios.get('https://service.cloud.teu.ac.jp/portal/index', {  
