@@ -2,7 +2,7 @@
   "name": "login-by-puppeteer",
   "version": "1.0.0",
   "description": "login by puppeteer using cookie token",
-  "main": "index.js",
+  "main": "getNewInfo.js",
   "author": "orange634nty",
   "license": "MIT",
   "dependencies": {
