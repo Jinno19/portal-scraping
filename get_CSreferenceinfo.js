@@ -1,6 +1,7 @@
 
-import puppeteer from 'puppeteer';
 import axios from 'axios';
+
+import { app } from './main.js';
 
 const REFERENCEINFORMATION_URL = 'https://kyo-web.teu.ac.jp/campusweb/';
 const SYLLABUS_URL = 'https://kyo-web.teu.ac.jp/campusweb/campussquare.do?_flowId=SYW0001000-flow';
@@ -27,7 +28,7 @@ async function loginProcesser(page) {
     }
 }
 
-async function getReference(page) {
+export async function getReference(page) {
     let titles = await page.evaluate(() => {
         //eslint-disable-next-line no-undef
         let titles = Array.from(document.querySelectorAll('html > body > .normal > tbody > tr > td:nth-child(6)'), 
@@ -133,24 +134,12 @@ async function postAxios(title, instructor) {
     }
 }
 
-//cron.schedule('0 */10 * * * ', () => {
-(async () => {
+export async function puppeteerLauncher(uri) {
     process.on('unhandledRejection', console.dir);
 
-    const browser = await puppeteer.launch({
-        args: [
-            '--lang=ja',
-            '--disable-gpu',
-            '--disable-dev-shm-usage',
-            '--disable-setuid-sandbox',
-            '--no-first-run',
-            '--no-sandbox',
-            '--no-zygote',
-            '--proxy-server=\'direct://\'',
-            '--proxy-bypass-list=*',
-        ],
-    });
-    const page = await browser.newPage();
+    const app2 = await app;
+    const page = (await app2.pages())[0];
+    await page.goto(uri);
     await page.goto(REFERENCEINFORMATION_URL);
 
     await loginProcesser(page);
@@ -170,6 +159,11 @@ async function postAxios(title, instructor) {
 
     await getReference(page);
 
-    await browser.close();
+    await app.close();
+}
+
+//cron.schedule('0 */10 * * * ', () => {
+(async () => {
+    await puppeteerLauncher(REFERENCEINFORMATION_URL);
 })();
 //});

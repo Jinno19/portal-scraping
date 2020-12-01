@@ -8,7 +8,7 @@ import { main } from './login.js';
 import { app } from './main.js';
 
 
-async function getLecturePage(uri) {
+export async function getLecturePage(uri) {
     await main();
 
     const lecturesArr = [];

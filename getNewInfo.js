@@ -8,7 +8,7 @@ import { main } from './login.js';
 import { app } from './main.js';
 
 
-async function getNewInformations(uri) {
+export async function getNewInformations(uri) {
     await main();
 
     const informations = [];
