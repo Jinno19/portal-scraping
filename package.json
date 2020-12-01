@@ -5,6 +5,9 @@
   "main": "getNewInfo.js",
   "author": "orange634nty",
   "license": "MIT",
+  "engines": {
+    "node": "12.x"
+  },
   "dependencies": {
     "axios": "^0.21.0",
     "axios-cookiejar-support": "^1.0.1",
