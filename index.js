@@ -16,6 +16,7 @@ getLecturePage('https://service.cloud.teu.ac.jp/inside2/hachiouji/hachioji_commo
 puppeteerLauncher();
 //});
 
+
 /*
 const funcs = [
     getNewInformations,
