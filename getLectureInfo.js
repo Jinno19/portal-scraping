@@ -1,20 +1,34 @@
-//import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer';
 import cheerio from 'cheerio';
 //import logger from './logger.js';
 //import cron from 'node-cron';
 //import axios from 'axios';
 
 import { main } from './login.js';
-import { app } from './main.js';
-
 
 export async function getLecturePage(uri) {
     await main();
 
     const lecturesArr = [];
 
-    const app2 = await app;
-    const page = (await app2.pages())[0];
+    process.on('unhandledRejection', console.dir);
+
+    const browser = await puppeteer.launch({
+        args: [
+            '--lang=ja',
+            '--disable-gpu',
+            '--disable-dev-shm-usage',
+            '--disable-setuid-sandbox',
+            '--no-first-run',
+            '--no-sandbox',
+            '--no-zygote',
+            '--proxy-server=\'direct://\'',
+            '--proxy-bypass-list=*',
+            `--user-data-dir=${process.cwd()}/data`,
+        ],
+    });
+    const page = await browser.newPage();
+    page.setDefaultTimeout(0);
     await page.goto(uri);
     let html = await page.$eval('html', html => {
         return html.innerHTML;
@@ -44,7 +58,7 @@ export async function getLecturePage(uri) {
         return result;
     }
   
-    await app2.close();
+    await browser.close();
     postAxios(lecturesArr);
     return lecturesArr;
 }

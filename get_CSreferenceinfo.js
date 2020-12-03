@@ -1,7 +1,6 @@
 
+import puppeteer from 'puppeteer';
 import axios from 'axios';
-
-import { app } from './main.js';
 
 const REFERENCEINFORMATION_URL = 'https://kyo-web.teu.ac.jp/campusweb/';
 const SYLLABUS_URL = 'https://kyo-web.teu.ac.jp/campusweb/campussquare.do?_flowId=SYW0001000-flow';
@@ -28,7 +27,7 @@ async function loginProcesser(page) {
     }
 }
 
-export async function getReference(page) {
+async function getReference(page) {
     let titles = await page.evaluate(() => {
         //eslint-disable-next-line no-undef
         let titles = Array.from(document.querySelectorAll('html > body > .normal > tbody > tr > td:nth-child(6)'), 
@@ -111,6 +110,7 @@ async function contextGeter(title, instructor, lectureLength, page, number) {
 async function postAxios(title, instructor) {
     try {
         // eslint-disable-next-line no-unused-vars
+        /*
         let res = await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/reference', 
             [
                 {
@@ -123,6 +123,7 @@ async function postAxios(title, instructor) {
                 // eslint-disable-next-line
                 }
             ]);
+            */
         console.log(title);
         console.log(instructor);
         console.log(csReference);
@@ -134,12 +135,25 @@ async function postAxios(title, instructor) {
     }
 }
 
-export async function puppeteerLauncher(uri) {
+//cron.schedule('0 */10 * * * ', () => {
+export async function puppeteerLauncher() {
     process.on('unhandledRejection', console.dir);
 
-    const app2 = await app;
-    const page = (await app2.pages())[0];
-    await page.goto(uri);
+    const browser = await puppeteer.launch({
+        args: [
+            '--lang=ja',
+            '--disable-gpu',
+            '--disable-dev-shm-usage',
+            '--disable-setuid-sandbox',
+            '--no-first-run',
+            '--no-sandbox',
+            '--no-zygote',
+            '--proxy-server=\'direct://\'',
+            '--proxy-bypass-list=*',
+        ],
+    });
+    const page = await browser.newPage();
+    page.setDefaultTimeout(0);
     await page.goto(REFERENCEINFORMATION_URL);
 
     await loginProcesser(page);
@@ -159,11 +173,6 @@ export async function puppeteerLauncher(uri) {
 
     await getReference(page);
 
-    await app.close();
+    await browser.close();
 }
-
-//cron.schedule('0 */10 * * * ', () => {
-(async () => {
-    await puppeteerLauncher(REFERENCEINFORMATION_URL);
-})();
 //});

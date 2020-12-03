@@ -1,20 +1,34 @@
-//import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer';
 import cheerio from 'cheerio';
 //import logger from './logger.js';
 //import cron from 'node-cron';
-import axios from 'axios';
+//import axios from 'axios';
 
 import { main } from './login.js';
-import { app } from './main.js';
-
 
 export async function getNewInformations(uri) {
     await main();
 
     const informations = [];
 
-    const app2 = await app;
-    const page = (await app2.pages())[0];
+    process.on('unhandledRejection', console.dir);
+
+    const browser = await puppeteer.launch({
+        args: [
+            '--lang=ja',
+            '--disable-gpu',
+            '--disable-dev-shm-usage',
+            '--disable-setuid-sandbox',
+            '--no-first-run',
+            '--no-sandbox',
+            '--no-zygote',
+            '--proxy-server=\'direct://\'',
+            '--proxy-bypass-list=*',
+            `--user-data-dir=${process.cwd()}/data`,
+        ],
+    });
+    const page = await browser.newPage();
+    page.setDefaultTimeout(0);
     await page.goto(uri);
     let html = await page.$eval('html', html  => {
         return html.innerHTML;
@@ -52,7 +66,7 @@ export async function getNewInformations(uri) {
         information.context = $('.post > .entry-body').text().replace(/[\f\r\n\t\v]/g, '');
     }
 
-    await app2.close();
+    await browser.close();
     await postAxios(informations);
     return  informations;
 }
@@ -60,7 +74,7 @@ export async function getNewInformations(uri) {
 async function postAxios(informations) {
     try {
         // eslint-disable-next-line no-unused-vars
-        let res = await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/new', informations);
+        //let res = await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/new', informations);
         console.log(informations);
     } catch (err) {
         console.error(err + '\ncontinue');
@@ -70,8 +84,3 @@ async function postAxios(informations) {
     }
 }
 
-//cron.schedule('0 */10 * * * ', () => {
-(async () => {
-    await getNewInformations('https://service.cloud.teu.ac.jp/inside2/hachiouji/computer_science/');
-})();
-//});

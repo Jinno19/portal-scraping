@@ -28,7 +28,7 @@ export async function main() {
     await app.close();
 }
 
-main();
+//main();
 
 async function login() {
     const browser = await puppeteer.launch({
