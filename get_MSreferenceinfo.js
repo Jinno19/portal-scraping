@@ -1,6 +1,6 @@
 
 import puppeteer from 'puppeteer';
-import axios from 'axios';
+//import axios from 'axios';
 
 const REFERENCEINFORMATION_URL = 'https://kyo-web.teu.ac.jp/campusweb/';
 const SYLLABUS_URL = 'https://kyo-web.teu.ac.jp/campusweb/campussquare.do?_flowId=SYW0001000-flow';
