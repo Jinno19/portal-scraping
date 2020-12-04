@@ -1,6 +1,6 @@
 
 import puppeteer from 'puppeteer';
-//import axios from 'axios';
+import axios from 'axios';
 
 const REFERENCEINFORMATION_URL = 'https://kyo-web.teu.ac.jp/campusweb/';
 const SYLLABUS_URL = 'https://kyo-web.teu.ac.jp/campusweb/campussquare.do?_flowId=SYW0001000-flow';
@@ -110,7 +110,6 @@ async function contextGeter(title, instructor, lectureLength, page, number) {
 async function postAxios(title, instructor) {
     try {
         // eslint-disable-next-line no-unused-vars
-        /*
         let res = await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/reference', 
             [
                 {
@@ -123,10 +122,11 @@ async function postAxios(title, instructor) {
                 // eslint-disable-next-line
                 }
             ]);
-            */
+        /*
         console.log(title);
         console.log(instructor);
         console.log(csReference);
+        */
     } catch (err) {
         console.error(err + '\ncontinue');
         if (/429/.test(err)) {

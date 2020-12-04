@@ -2,7 +2,7 @@ import puppeteer from 'puppeteer';
 import cheerio from 'cheerio';
 //import logger from './logger.js';
 //import cron from 'node-cron';
-//import axios from 'axios';
+import axios from 'axios';
 
 import { main } from './login.js';
 
@@ -74,8 +74,8 @@ export async function getNewInformations(uri) {
 async function postAxios(informations) {
     try {
         // eslint-disable-next-line no-unused-vars
-        //let res = await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/new', informations);
-        console.log(informations);
+        let res = await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/new', informations);
+        //console.log(informations);
     } catch (err) {
         console.error(err + '\ncontinue');
         if (/429/.test(err)) {
