@@ -60,7 +60,7 @@ export async function getLecturePage(uri) {
   
     await browser.close();
     postAxios(lecturesArr);
-    return lecturesArr;
+    return '';
 }
 
 async function postAxios(arr) {
@@ -77,7 +77,9 @@ async function postAxios(arr) {
 }
 
 //cron.schedule('0 */10 * * * ', () => {
+/*
 (async () => {
     await getLecturePage('https://service.cloud.teu.ac.jp/inside2/hachiouji/hachioji_common/cancel/');
 })();
+*/
 //});

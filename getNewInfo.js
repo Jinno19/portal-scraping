@@ -68,7 +68,7 @@ export async function getNewInformations(uri) {
 
     await browser.close();
     await postAxios(informations);
-    return  informations;
+    return  '';
 }
 
 async function postAxios(informations) {
@@ -84,3 +84,11 @@ async function postAxios(informations) {
     }
 }
 
+
+//cron.schedule('0 */10 * * * ', () => {
+/*
+(async () => {
+    await getNewInformations('https://service.cloud.teu.ac.jp/inside2/hachiouji/computer_science/');
+})();
+*/
+//});
