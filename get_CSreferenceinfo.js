@@ -35,12 +35,14 @@ async function getReference(page) {
             a => a.textContent.replace(/[\n]/g, ''));
         return titles;
     });
+    console.log(titles);
     let instructors = await page.evaluate(() => {
         //eslint-disable-next-line no-undef
         let instructors = Array.from(document.querySelectorAll('html > body > .normal > tbody > tr > td:nth-child(7)'), 
             a => a.textContent.replace(/[\n]/g, ''));
         return instructors;
     });
+    console.log(instructors);
     const lectureLength = await page.evaluate(() => {
         //eslint-disable-next-line no-undef
         let lecLength = document.querySelector('body > b:nth-child(5)').textContent.replace( /[^0-9]/g, '');
