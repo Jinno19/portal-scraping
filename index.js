@@ -17,6 +17,7 @@ puppeteerLauncher();
 //});
 
 
+
 /*
 const funcs = [
     getNewInformations,
