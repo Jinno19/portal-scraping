@@ -25,7 +25,7 @@
   },
   "scripts": {
     "lint": "eslint",
-    "start": "node -r dotenv/config --experimental-modules",
+    "start": "node -r dotenv/config --experimental-modules index.js",
     "getCookie": "node getCookie.js",
     "getTitle": "node getTitle.js",
     "watch:getnewinfo": "forever start -a --watch --watchIgnore --uid getnewinfo -c \"node -r dotenv/config\" get_newinfo_For_axios.js"

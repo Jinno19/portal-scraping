@@ -28,6 +28,7 @@ async function loginProcesser(page) {
 }
 
 async function getReference(page) {
+    await page.waitFor(15000);
     let titles = await page.evaluate(() => {
         //eslint-disable-next-line no-undef
         let titles = Array.from(document.querySelectorAll('html > body > .normal > tbody > tr > td:nth-child(6)'), 
@@ -81,8 +82,6 @@ async function contextGeter(title, instructor, lectureLength, page, number) {
             let number = i;
             console.log(number);
 
-            await page.waitFor(3000);
-
             await Promise.all([
                 page.waitForNavigation({ waitUntil: 'load' }),
                 await page.goBack(),
@@ -122,11 +121,11 @@ async function postAxios(title, instructor) {
                 // eslint-disable-next-line
                 }
             ]);
-        /*
+        
         console.log(title);
         console.log(instructor);
         console.log(csReference);
-        */
+        
     } catch (err) {
         console.error(err + '\ncontinue');
         if (/429/.test(err)) {
@@ -141,6 +140,7 @@ export async function puppeteerLauncher() {
 
     const browser = await puppeteer.launch({
         args: [
+            '--window-size=1280,720',
             '--lang=ja',
             '--disable-gpu',
             '--disable-dev-shm-usage',
@@ -169,7 +169,6 @@ export async function puppeteerLauncher() {
     await page.select('table > tbody > tr:nth-child(11) > td > select', '500');
     await page.click('table > tbody > tr:nth-child(11) > td > select');
     await page.click('#jikanwariSearchForm > table > tbody > tr:nth-child(12) > td > p > input[type=button]');
-    await page.waitFor(3000);
 
     await getReference(page);
 
