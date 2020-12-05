@@ -155,6 +155,14 @@ export async function puppeteerLauncher() {
         ],
     });
     const page = await browser.newPage();
+    await page.setRequestInterception(true);
+    page.on('request', (request) => {
+        if (['image', 'stylesheet', 'font'].indexOf(request.resourceType()) !== -1) {
+            request.abort();
+        } else {
+            request.continue();
+        }
+    });
     page.setDefaultTimeout(0);
     await page.goto(REFERENCEINFORMATION_URL);
 
@@ -177,3 +185,5 @@ export async function puppeteerLauncher() {
     await browser.close();
 }
 //});
+
+puppeteerLauncher();
