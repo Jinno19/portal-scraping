@@ -1,4 +1,4 @@
-//メディア学部参考書情報取得
+//看護学科参考書情報取得
 
 import puppeteer from 'puppeteer';
 import axios from 'axios';
@@ -137,6 +137,7 @@ async function postAxios(title, instructor) {
     }
 }
 
+//cron.schedule('0 */10 * * * ', () => {
 export async function puppeteerLauncher() {
     process.on('unhandledRejection', console.dir);
 
@@ -173,19 +174,17 @@ export async function puppeteerLauncher() {
     await page.waitForSelector('table > tbody > tr:nth-child(2) > td:nth-child(2) > #jikanwariShozokuCode');
 
     await page.click('table > tbody > tr:nth-child(2) > td:nth-child(2) > #jikanwariShozokuCode');
-    await page.select('table > tbody > tr:nth-child(2) > td:nth-child(2) > #jikanwariShozokuCode', 'MS');
-    await page.click('table > tbody > tr:nth-child(3) > td:nth-child(2) > #gakkiKubunCode');
-    await page.select('table > tbody > tr:nth-child(3) > td:nth-child(2) > #gakkiKubunCode', '2');
+    await page.select('table > tbody > tr:nth-child(2) > td:nth-child(2) > #jikanwariShozokuCode', 'HSH1');
 
     await page.click('table > tbody > tr:nth-child(11) > td > select');
     await page.select('table > tbody > tr:nth-child(11) > td > select', '500');
     await page.click('table > tbody > tr:nth-child(11) > td > select');
     await page.click('#jikanwariSearchForm > table > tbody > tr:nth-child(12) > td > p > input[type=button]');
-    await page.waitFor(3000);
 
     await getReference(page);
 
     await browser.close();
 }
+//});
 
 puppeteerLauncher();

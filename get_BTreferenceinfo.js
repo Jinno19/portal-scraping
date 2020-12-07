@@ -1,6 +1,7 @@
+//応用生物学部参考書情報取得
 
 import puppeteer from 'puppeteer';
-//import axios from 'axios';
+import axios from 'axios';
 
 const REFERENCEINFORMATION_URL = 'https://kyo-web.teu.ac.jp/campusweb/';
 const SYLLABUS_URL = 'https://kyo-web.teu.ac.jp/campusweb/campussquare.do?_flowId=SYW0001000-flow';
@@ -28,18 +29,21 @@ async function loginProcesser(page) {
 }
 
 async function getReference(page) {
+    await page.waitFor(15000);
     let titles = await page.evaluate(() => {
         //eslint-disable-next-line no-undef
         let titles = Array.from(document.querySelectorAll('html > body > .normal > tbody > tr > td:nth-child(6)'), 
             a => a.textContent.replace(/[\n]/g, ''));
         return titles;
     });
+    console.log(titles);
     let instructors = await page.evaluate(() => {
         //eslint-disable-next-line no-undef
         let instructors = Array.from(document.querySelectorAll('html > body > .normal > tbody > tr > td:nth-child(7)'), 
             a => a.textContent.replace(/[\n]/g, ''));
         return instructors;
     });
+    console.log(instructors);
     const lectureLength = await page.evaluate(() => {
         //eslint-disable-next-line no-undef
         let lecLength = document.querySelector('body > b:nth-child(5)').textContent.replace( /[^0-9]/g, '');
@@ -81,8 +85,6 @@ async function contextGeter(title, instructor, lectureLength, page, number) {
             let number = i;
             console.log(number);
 
-            await page.waitFor(3000);
-
             await Promise.all([
                 page.waitForNavigation({ waitUntil: 'load' }),
                 await page.goBack(),
@@ -110,7 +112,6 @@ async function contextGeter(title, instructor, lectureLength, page, number) {
 async function postAxios(title, instructor) {
     try {
         // eslint-disable-next-line no-unused-vars
-        /*
         let res = await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/reference', 
             [
                 {
@@ -123,10 +124,11 @@ async function postAxios(title, instructor) {
                 // eslint-disable-next-line
                 }
             ]);
-            */
+        
         console.log(title);
         console.log(instructor);
         console.log(csReference);
+        
     } catch (err) {
         console.error(err + '\ncontinue');
         if (/429/.test(err)) {
@@ -141,6 +143,7 @@ export async function puppeteerLauncher() {
 
     const browser = await puppeteer.launch({
         args: [
+            '--window-size=1280,720',
             '--lang=ja',
             '--disable-gpu',
             '--disable-dev-shm-usage',
@@ -153,6 +156,14 @@ export async function puppeteerLauncher() {
         ],
     });
     const page = await browser.newPage();
+    await page.setRequestInterception(true);
+    page.on('request', (request) => {
+        if (['image', 'stylesheet', 'font'].indexOf(request.resourceType()) !== -1) {
+            request.abort();
+        } else {
+            request.continue();
+        }
+    });
     page.setDefaultTimeout(0);
     await page.goto(REFERENCEINFORMATION_URL);
 
@@ -169,7 +180,6 @@ export async function puppeteerLauncher() {
     await page.select('table > tbody > tr:nth-child(11) > td > select', '500');
     await page.click('table > tbody > tr:nth-child(11) > td > select');
     await page.click('#jikanwariSearchForm > table > tbody > tr:nth-child(12) > td > p > input[type=button]');
-    await page.waitFor(3000);
 
     await getReference(page);
 
@@ -177,6 +187,4 @@ export async function puppeteerLauncher() {
 }
 //});
 
-(async () => {
-    await puppeteerLauncher();
-})();
+puppeteerLauncher();

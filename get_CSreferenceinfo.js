@@ -1,3 +1,4 @@
+//コンピュータサイエンス学部参考書情報取得
 
 import puppeteer from 'puppeteer';
 import axios from 'axios';
