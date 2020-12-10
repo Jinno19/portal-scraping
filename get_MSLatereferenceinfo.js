@@ -1,11 +1,11 @@
-//医療保健学部参考書情報取得
+//メディア学部参考書情報取得
 
 import puppeteer from 'puppeteer';
 import axios from 'axios';
 
 const REFERENCEINFORMATION_URL = 'https://kyo-web.teu.ac.jp/campusweb/';
 const SYLLABUS_URL = 'https://kyo-web.teu.ac.jp/campusweb/campussquare.do?_flowId=SYW0001000-flow';
-let hsReference = '';
+let msReference = '';
 let startNumber = 0;
 
 async function loginProcesser(page) {
@@ -51,7 +51,7 @@ async function getReference(page) {
     });
     await contextGeter(titles, instructors, lectureLength, page, startNumber);
 
-    return hsReference;
+    return msReference;
 }
 
 async function contextGeter(title, instructor, lectureLength, page, number) {
@@ -77,7 +77,7 @@ async function contextGeter(title, instructor, lectureLength, page, number) {
             const lecTitle = title[i-1].toString().replace(/[\f\r\t\v]/g, '');
             const lecInstructor = instructor[i-1].toString().replace(/[\f\r\t\v]/g, '');
 
-            hsReference = refTitle.toString().replace(/[\f\r\t\v]/g, '');
+            msReference = refTitle.toString().replace(/[\f\r\t\v]/g, '');
             startNumber++;
 
             await postAxios(lecTitle, lecInstructor); 
@@ -128,7 +128,7 @@ async function postAxios(title, instructor) {
         */
         console.log(title);
         console.log(instructor);
-        console.log(hsReference);
+        console.log(msReference);
         
     } catch (err) {
         console.error(err + '\ncontinue');
@@ -138,7 +138,7 @@ async function postAxios(title, instructor) {
     }
 }
 
-export async function goToHsSyllabus() {
+export async function goToMsSyllabus2() {
     process.on('unhandledRejection', console.dir);
 
     const browser = await puppeteer.launch({
@@ -173,12 +173,15 @@ export async function goToHsSyllabus() {
     await page.waitForSelector('table > tbody > tr:nth-child(2) > td:nth-child(2) > #jikanwariShozokuCode');
 
     await page.click('table > tbody > tr:nth-child(2) > td:nth-child(2) > #jikanwariShozokuCode');
-    await page.select('table > tbody > tr:nth-child(2) > td:nth-child(2) > #jikanwariShozokuCode', 'HS');
+    await page.select('table > tbody > tr:nth-child(2) > td:nth-child(2) > #jikanwariShozokuCode', 'MS');
+    await page.click('table > tbody > tr:nth-child(3) > td:nth-child(2) > #gakkiKubunCode');
+    await page.select('table > tbody > tr:nth-child(3) > td:nth-child(2) > #gakkiKubunCode', '2');
 
     await page.click('table > tbody > tr:nth-child(11) > td > select');
     await page.select('table > tbody > tr:nth-child(11) > td > select', '500');
     await page.click('table > tbody > tr:nth-child(11) > td > select');
     await page.click('#jikanwariSearchForm > table > tbody > tr:nth-child(12) > td > p > input[type=button]');
+    await page.waitFor(3000);
 
     await getReference(page);
 

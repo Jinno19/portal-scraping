@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const REFERENCEINFORMATION_URL = 'https://kyo-web.teu.ac.jp/campusweb/';
 const SYLLABUS_URL = 'https://kyo-web.teu.ac.jp/campusweb/campussquare.do?_flowId=SYW0001000-flow';
-let csReference = '';
+let hsReference = '';
 let startNumber = 0;
 
 async function loginProcesser(page) {
@@ -51,7 +51,7 @@ async function getReference(page) {
     });
     await contextGeter(titles, instructors, lectureLength, page, startNumber);
 
-    return csReference;
+    return hsReference;
 }
 
 async function contextGeter(title, instructor, lectureLength, page, number) {
@@ -77,7 +77,7 @@ async function contextGeter(title, instructor, lectureLength, page, number) {
             const lecTitle = title[i-1].toString().replace(/[\f\r\t\v]/g, '');
             const lecInstructor = instructor[i-1].toString().replace(/[\f\r\t\v]/g, '');
 
-            csReference = refTitle.toString().replace(/[\f\r\t\v]/g, '');
+            hsReference = refTitle.toString().replace(/[\f\r\t\v]/g, '');
             startNumber++;
 
             await postAxios(lecTitle, lecInstructor); 
@@ -112,6 +112,7 @@ async function contextGeter(title, instructor, lectureLength, page, number) {
 async function postAxios(title, instructor) {
     try {
         // eslint-disable-next-line no-unused-vars
+        /*
         let res = await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/reference', 
             [
                 {
@@ -120,14 +121,14 @@ async function postAxios(title, instructor) {
                     // eslint-disable-next-line 
                     "instructor": instructor, 
                     // eslint-disable-next-line
-                    "Reference": csReference
+                    "Reference": hsReference
                 // eslint-disable-next-line
                 }
             ]);
-        
+        */
         console.log(title);
         console.log(instructor);
-        console.log(csReference);
+        console.log(hsReference);
         
     } catch (err) {
         console.error(err + '\ncontinue');
@@ -137,8 +138,7 @@ async function postAxios(title, instructor) {
     }
 }
 
-//cron.schedule('0 */10 * * * ', () => {
-export async function puppeteerLauncher() {
+export async function goToHsH2Syllabus() {
     process.on('unhandledRejection', console.dir);
 
     const browser = await puppeteer.launch({
@@ -164,7 +164,6 @@ export async function puppeteerLauncher() {
             request.continue();
         }
     });
-    page.setDefaultTimeout(0);
     await page.goto(REFERENCEINFORMATION_URL);
 
     await loginProcesser(page);
@@ -185,6 +184,3 @@ export async function puppeteerLauncher() {
 
     await browser.close();
 }
-//});
-
-puppeteerLauncher();

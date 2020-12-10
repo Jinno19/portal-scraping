@@ -112,6 +112,7 @@ async function contextGeter(title, instructor, lectureLength, page, number) {
 async function postAxios(title, instructor) {
     try {
         // eslint-disable-next-line no-unused-vars
+        /*
         let res = await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/reference', 
             [
                 {
@@ -124,7 +125,7 @@ async function postAxios(title, instructor) {
                 // eslint-disable-next-line
                 }
             ]);
-        
+        */
         console.log(title);
         console.log(instructor);
         console.log(csReference);
@@ -137,8 +138,7 @@ async function postAxios(title, instructor) {
     }
 }
 
-//cron.schedule('0 */10 * * * ', () => {
-export async function puppeteerLauncher() {
+export async function goToCsSyllabus() {
     process.on('unhandledRejection', console.dir);
 
     const browser = await puppeteer.launch({
@@ -164,7 +164,6 @@ export async function puppeteerLauncher() {
             request.continue();
         }
     });
-    page.setDefaultTimeout(0);
     await page.goto(REFERENCEINFORMATION_URL);
 
     await loginProcesser(page);
@@ -185,5 +184,3 @@ export async function puppeteerLauncher() {
 
     await browser.close();
 }
-//});
-
