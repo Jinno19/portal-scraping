@@ -66,7 +66,7 @@ export async function getLecturePage(uri) {
 async function postAxios(arr) {
     try {
         // eslint-disable-next-line no-unused-vars
-        //let res = await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/lecture', arr);
+        let res = await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/lecture', arr);
         console.log(arr);
     } catch (err) {
         console.error(err + '\ncontinue');
