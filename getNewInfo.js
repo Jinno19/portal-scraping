@@ -84,3 +84,9 @@ async function postAxios(informations) {
         }
     }
 }
+
+/*
+(async () => {
+    await getNewInformations('https://service.cloud.teu.ac.jp/inside2/hachiouji/computer_science/');
+})();
+*/
