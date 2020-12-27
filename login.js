@@ -1,5 +1,6 @@
 import log4js from 'log4js';
 import puppeteer from 'puppeteer';
+import axios from 'axios';
 
 const logger = log4js.getLogger('main');
 logger.level = 'all';
@@ -57,7 +58,8 @@ async function login() {
     }
 
     logger.debug('logging in');
-
+    axios.post('https://discord.com/api/webhooks/790045332008337429/Ze2xLfvFp-hG8bqM5B0NaiIobH6UvYULLRetCCSVq7AZJcNFdTVK_357pnTEBQRDMU_p', 
+        'Your login status is invalid.');
     await page.waitForSelector('input[type="email"]', { visible: true });
 
     await page.click('input[type="email"]');
