@@ -53,7 +53,7 @@ export async function getNewInformations(uri) {
                 information.tags.push('重要');
                 information.tags = [...new Set(information.tags)];
             }
-            return  information;
+            return information;
         });
     });
 
@@ -69,7 +69,7 @@ export async function getNewInformations(uri) {
     await browser.close();
     informations.reverse();
     await postAxios(informations);
-    return  '';
+    return '';
 }
 
 async function postAxios(informations) {
