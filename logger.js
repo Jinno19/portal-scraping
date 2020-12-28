@@ -5,7 +5,7 @@ export default log4js.configure({
     appenders: {
         out: {
             type: 'stdout',
-            layout: {type: 'pattern', pattern: '%d{ISO8601} %5p %c - %m'}
+            layout: { type: 'pattern', pattern: '%d{ISO8601} %5p %c - %m' },
         },
     },
     categories: {
