@@ -73,7 +73,7 @@ export async function getNewInformations(uri) {
 async function postAxios(informations) {
     try {
         // eslint-disable-next-line no-unused-vars
-        //let res = await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/new', informations);
+        let res = await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/new', informations);
         console.log(informations);
     } catch (err) {
         console.error(err + '\ncontinue');
