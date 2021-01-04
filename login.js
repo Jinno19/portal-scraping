@@ -48,7 +48,7 @@ async function login() {
     });
 
     const page = (await browser.pages())[0];
-    page.setDefaultTimeout(0);
+    //page.setDefaultTimeout(0);
     await page.goto('https://service.cloud.teu.ac.jp/portal/inside', { waitUntil: 'networkidle0' });
     if (await page.$eval('html', element => /Tokyo University of Technology/img.test(element.textContent))) {
         logger.debug('already logged in');
@@ -59,7 +59,10 @@ async function login() {
 
     logger.debug('logging in');
     axios.post('https://discord.com/api/webhooks/790045332008337429/Ze2xLfvFp-hG8bqM5B0NaiIobH6UvYULLRetCCSVq7AZJcNFdTVK_357pnTEBQRDMU_p', 
-        'Your login status is invalid.');
+        {
+            // eslint-disable-next-line
+            "content": "Your login status is invalid."
+        });
     await page.waitForSelector('input[type="email"]', { visible: true });
 
     await page.click('input[type="email"]');

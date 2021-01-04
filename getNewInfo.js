@@ -1,7 +1,5 @@
 import puppeteer from 'puppeteer';
 import cheerio from 'cheerio';
-//import logger from './logger.js';
-//import cron from 'node-cron';
 import axios from 'axios';
 
 import { main } from './login.js';
@@ -30,7 +28,7 @@ export async function getNewInformations(uri) {
     const page = await browser.newPage();
     page.setDefaultTimeout(0);
     await page.goto(uri);
-    let html = await page.$eval('html', html  => {
+    let html = await page.$eval('html', html => {
         return html.innerHTML;
     });
     const $ = cheerio.load(html);
@@ -75,7 +73,7 @@ export async function getNewInformations(uri) {
 async function postAxios(informations) {
     try {
         // eslint-disable-next-line no-unused-vars
-        let res = await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/new', informations);
+        //let res = await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/new', informations);
         console.log(informations);
     } catch (err) {
         console.error(err + '\ncontinue');
@@ -85,8 +83,8 @@ async function postAxios(informations) {
     }
 }
 
-/*
+
 (async () => {
     await getNewInformations('https://service.cloud.teu.ac.jp/inside2/hachiouji/computer_science/');
 })();
-*/
+
