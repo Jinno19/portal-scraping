@@ -148,8 +148,8 @@ async function postAxios(title, instructor) {
 
 async function departmentSelector(page) {
 
-    const department = ['ES', 'GF', 'HS', 'MS', 'MS', 'BT', 'CS', 'DS', 'ESE5', 'ESE6', 'ESE7', 'HSH1', 
-        'HSH2', 'HSH3', 'HSH4', 'HSH5', 'X1', 'X3'];
+    const department = ['BT', 'CS', 'DS', 'ESE5', 'ESE6', 'ESE7', 'ES', 'GF', 'HSH1', 
+        'HSH2', 'HSH3', 'HSH4', 'HSH5', 'HS', 'MS', 'MS', 'X1', 'X3'];
     let semesterCount = 1;
 
     for (let n = 0; n <= department.length; n++) {
