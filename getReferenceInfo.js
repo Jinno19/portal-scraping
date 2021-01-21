@@ -112,6 +112,7 @@ async function contextGeter(title, instructor, lectureLength, page, number) {
 async function postAxios(title, instructor) {
     try {
         // eslint-disable-next-line no-unused-vars
+        /*
         await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/reference', 
             [
                 {
@@ -124,6 +125,7 @@ async function postAxios(title, instructor) {
                 // eslint-disable-next-line
                 }
             ]);
+            */
         console.log(title);
         console.log(instructor);
         console.log(csReference);
@@ -140,6 +142,7 @@ async function departmentSelector(page) {
 
     const department = ['ES', 'HS', 'MS', 'MS', 'BT', 'CS', 'DS', 'ESE5', 'ESE6', 'ESE7', 'GF', 'HSH1', 
         'HSH2', 'HSH3', 'HSH4', 'HSH5', 'X1', 'X3'];
+    let semesterCount = 1;
 
     for (let n = 0; n <= department.length; n++) {
         startNumber = 0;
@@ -150,10 +153,9 @@ async function departmentSelector(page) {
         await page.click('table > tbody > tr:nth-child(2) > td:nth-child(2) > #jikanwariShozokuCode');
         await page.select('table > tbody > tr:nth-child(2) > td:nth-child(2) > #jikanwariShozokuCode', `${department[n]}`);
         if (department[n] === 'MS') {
-            let count = 1;
             await page.click('table > tbody > tr:nth-child(3) > td:nth-child(2) > #gakkiKubunCode');
-            await page.select('table > tbody > tr:nth-child(3) > td:nth-child(2) > #gakkiKubunCode', `${count}`);
-            count ++;
+            await page.select('table > tbody > tr:nth-child(3) > td:nth-child(2) > #gakkiKubunCode', `${semesterCount}`);
+            semesterCount ++;
         }
 
         await page.click('table > tbody > tr:nth-child(11) > td > select');
@@ -200,8 +202,8 @@ export async function goToSyllabus() {
     await browser.close();
 }
 
-/*
+
 (async () => {
     await goToSyllabus();
 })();
-*/
+
