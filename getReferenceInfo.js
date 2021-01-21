@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const REFERENCEINFORMATION_URL = 'https://kyo-web.teu.ac.jp/campusweb/';
 const SYLLABUS_URL = 'https://kyo-web.teu.ac.jp/campusweb/campussquare.do?_flowId=SYW0001000-flow';
-let csReference = '';
+let reference = '';
 let startNumber = 0;
 
 async function loginProcesser(page) {
@@ -46,12 +46,22 @@ async function getReference(page) {
     console.log(instructors);
     const lectureLength = await page.evaluate(() => {
         //eslint-disable-next-line no-undef
-        let lecLength = document.querySelector('body > b:nth-child(5)').textContent.replace( /[^0-9]/g, '');
-        return parseInt(lecLength);
+        let lecLength = document.querySelector('body > b:nth-child(5)');
+        if (lecLength !== null) {
+            lecLength = lecLength.textContent.replace( /[^0-9]/g, '');
+            return parseInt(lecLength);
+        } else {
+            return 0;
+        }
     });
-    await contextGeter(titles, instructors, lectureLength, page, startNumber);
+    console.log(lectureLength);
 
-    return csReference;
+    if (lectureLength !== 0) {
+        await contextGeter(titles, instructors, lectureLength, page, startNumber);
+        return reference;
+    } else { 
+        return '';
+    }
 }
 
 async function contextGeter(title, instructor, lectureLength, page, number) {
@@ -77,7 +87,7 @@ async function contextGeter(title, instructor, lectureLength, page, number) {
             const lecTitle = title[i-1].toString().replace(/[\f\r\t\v]/g, '');
             const lecInstructor = instructor[i-1].toString().replace(/[\f\r\t\v]/g, '');
 
-            csReference = refTitle.toString().replace(/[\f\r\t\v]/g, '');
+            reference = refTitle.toString().replace(/[\f\r\t\v]/g, '');
             startNumber++;
 
             await postAxios(lecTitle, lecInstructor); 
@@ -112,7 +122,6 @@ async function contextGeter(title, instructor, lectureLength, page, number) {
 async function postAxios(title, instructor) {
     try {
         // eslint-disable-next-line no-unused-vars
-        /*
         await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/reference', 
             [
                 {
@@ -121,14 +130,13 @@ async function postAxios(title, instructor) {
                     // eslint-disable-next-line 
                     "instructor": instructor, 
                     // eslint-disable-next-line
-                    "Reference": csReference
+                    "Reference": reference
                 // eslint-disable-next-line
                 }
             ]);
-            */
         console.log(title);
         console.log(instructor);
-        console.log(csReference);
+        console.log(reference);
         
     } catch (err) {
         console.error(err + '\ncontinue');
@@ -140,7 +148,7 @@ async function postAxios(title, instructor) {
 
 async function departmentSelector(page) {
 
-    const department = ['ES', 'HS', 'MS', 'MS', 'BT', 'CS', 'DS', 'ESE5', 'ESE6', 'ESE7', 'GF', 'HSH1', 
+    const department = ['ES', 'GF', 'HS', 'MS', 'MS', 'BT', 'CS', 'DS', 'ESE5', 'ESE6', 'ESE7', 'HSH1', 
         'HSH2', 'HSH3', 'HSH4', 'HSH5', 'X1', 'X3'];
     let semesterCount = 1;
 
@@ -202,8 +210,8 @@ export async function goToSyllabus() {
     await browser.close();
 }
 
-
+/*
 (async () => {
     await goToSyllabus();
 })();
-
+*/
