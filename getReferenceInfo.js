@@ -1,5 +1,3 @@
-//コンピュータサイエンス学部参考書情報取得
-
 import puppeteer from 'puppeteer';
 import axios from 'axios';
 
@@ -122,7 +120,7 @@ async function contextGeter(title, instructor, lectureLength, page, number) {
 async function postAxios(title, instructor) {
     try {
         // eslint-disable-next-line no-unused-vars
-        await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/reference', 
+        await axios.post(process.env.POSTURL_REF, 
             [
                 {
                     // eslint-disable-next-line

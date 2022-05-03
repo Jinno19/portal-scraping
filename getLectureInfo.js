@@ -65,7 +65,7 @@ export async function getLecturePage(uri) {
 
 async function postAxios(arr) {
     try {
-        await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/lecture', arr);
+        await axios.post(process.env.POSTURL_LEC, arr);
         console.log(arr);
     } catch (err) {
         console.error(err + '\ncontinue');

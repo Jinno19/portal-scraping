@@ -72,7 +72,7 @@ export async function getNewInformations(uri) {
 
 async function postAxios(informations) {
     try {
-        await axios.post('https://tut-php-api.herokuapp.com/api/v1/infos/new', informations);
+        ///await axios.post(process.env.POSTURL_NEW, informations);
         console.log(informations);
     } catch (err) {
         console.error(err + '\ncontinue');
@@ -82,8 +82,8 @@ async function postAxios(informations) {
     }
 }
 
-/*
+
 (async () => {
     await getNewInformations('https://service.cloud.teu.ac.jp/inside2/hachiouji/computer_science/');
 })();
-*/
+

@@ -58,7 +58,7 @@ async function login() {
     }
 
     logger.debug('logging in');
-    axios.post('https://discord.com/api/webhooks/790045332008337429/Ze2xLfvFp-hG8bqM5B0NaiIobH6UvYULLRetCCSVq7AZJcNFdTVK_357pnTEBQRDMU_p', 
+    axios.post('https://discord.com/api/webhooks/846744382401151016/1UhWNXxQTQLImaSi6VjAhc9skvt4RUfr4hiK1Bb_7VmaAmmdzej0F7QNTdg_NvSMbEFV', 
         {
             // eslint-disable-next-line
             "content": "Your login status is invalid."
