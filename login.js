@@ -31,6 +31,8 @@ export async function main() {
 
 //main();
 
+console.log('Test.');
+
 async function login() {
     const browser = await puppeteer.launch({
         ignoreDefaultArgs: ['--disable-extensions'],
