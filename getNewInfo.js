@@ -12,6 +12,7 @@ export async function getNewInformations(uri) {
     process.on('unhandledRejection', console.dir);
 
     const browser = await puppeteer.launch({
+        ignoreDefaultArgs: ['--disable-extensions'],
         args: [
             '--lang=ja',
             '--disable-gpu',

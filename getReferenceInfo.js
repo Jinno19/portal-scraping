@@ -177,6 +177,7 @@ export async function goToSyllabus() {
     process.on('unhandledRejection', console.dir);
 
     const browser = await puppeteer.launch({
+        ignoreDefaultArgs: ['--disable-extensions'],
         args: [
             '--window-size=1280,720',
             '--lang=ja',

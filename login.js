@@ -33,6 +33,7 @@ export async function main() {
 
 async function login() {
     const browser = await puppeteer.launch({
+        ignoreDefaultArgs: ['--disable-extensions'],
         args: [
             '--window-size=1280,720',
             '--disable-gpu',
