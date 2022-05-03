@@ -4,9 +4,7 @@ import { getNewInformations } from './getNewInfo.js';
 import { getLecturePage } from './getLectureInfo.js';
 import { goToSyllabus } from './getReferenceInfo.js';
 
-console.log('Start.');
-
-cron.schedule('0 * * * *', () => {
+cron.schedule('0,15,30,45 * * * *', () => {
     getNewAndLectureInfo();
 });
 
