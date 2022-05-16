@@ -66,7 +66,7 @@ export async function getLecturePage(uri) {
 
 async function postAxios(arr) {
     try {
-        await axios.post(process.env.POSTURL_LEC, arr);
+        await axios.post(`${process.env.$POSTURL_APP}/lecture`, arr);
         console.log(arr);
     } catch (err) {
         console.error(err + '\ncontinue');

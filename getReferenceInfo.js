@@ -120,7 +120,7 @@ async function contextGeter(title, instructor, lectureLength, page, number) {
 async function postAxios(title, instructor) {
     try {
         // eslint-disable-next-line no-unused-vars
-        await axios.post(process.env.POSTURL_REF, 
+        await axios.post(`${process.env.$POSTURL_APP}/reference`, 
             [
                 {
                     // eslint-disable-next-line
