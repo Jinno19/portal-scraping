@@ -73,7 +73,7 @@ export async function getNewInformations(uri) {
 
 async function postAxios(informations) {
     try {
-        ///await axios.post(`${process.env.$POSTURL_APP}/v1/infos/new`, informations);
+        ///await axios.post(`${process.env.POSTURL_APP}/v1/infos/new`, informations);
         console.log(informations);
     } catch (err) {
         console.error(err + '\ncontinue');
